@@ -10,9 +10,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: "Demo App",
-      home:MyFeed()
+      home:MyFeed(),
+      theme: ThemeData(primarySwatch: Colors.indigo),
       );
 
   }
