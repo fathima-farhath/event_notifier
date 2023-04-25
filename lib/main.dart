@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// import 'screens/notifications.dart';
+// import 'screens/readnotify.dart';
 import 'screens/feed.dart';
 
 void main() {
@@ -10,9 +12,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: "Demo App",
-      home:MyFeed()
+      home:MyFeed(),
+      theme: ThemeData(primarySwatch: Colors.indigo),
       );
 
   }
