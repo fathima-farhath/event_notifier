@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'notifications.dart';
+import 'readevent.dart';
 class MyFeed extends StatefulWidget {
   const MyFeed({super.key});
 
@@ -105,14 +106,15 @@ drawer: Drawer(
 ),
 
 
-body: Container(
-  padding: EdgeInsets.fromLTRB(10, 15, 10,0),
+body: ListView(
+      children: [ Container(
+  padding: EdgeInsets.fromLTRB(15, 15, 15,0),
   child:   Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Container(
         width: MediaQuery.of(context).size.width,
-        height: 180,
+        
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
             topLeft:Radius.circular(10),
@@ -150,20 +152,26 @@ body: Container(
               Text("All the Event \nNotification at one Place",
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 30,
+                fontSize: 28,
                 fontWeight: FontWeight.w700
               ),),
              SizedBox(height: 20,),
 
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.date_range,color: Colors.white),
+                  Icon(Icons.add_a_photo_sharp,color: Colors.white),
+                  Row(
+                    children: [
+                      Icon(Icons.date_range,color: Colors.white),
                   SizedBox(width: 5,),
                   Text("27 Apr",style: TextStyle(
                 color: Colors.white,
                 fontSize: 16.0,
                 fontWeight: FontWeight.w700
-              ),)
+              ),),
+              ],
+                  ),
                 ],
               ),
 
@@ -178,23 +186,283 @@ body: Container(
                 fontWeight: FontWeight.w700,
               ),),
           SizedBox(height: 10,),
-          Container(
-            child: Column(
-              children: [
-                Image.asset(
-                  
-                ),
+
+
+        new GestureDetector(
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>EventRead()));
+            
+        },
+          
+            child: Container(
+              width: double.infinity, 
+              decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 10.0,
+                )
               ],
+              color: Colors.indigo[300],
+              borderRadius: BorderRadius.only(
+              topLeft:Radius.circular(0),
+              bottomLeft: Radius.circular(15),
+              bottomRight: Radius.circular(15),
+              topRight: Radius.circular(0)
+            ) ,),
+            
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                
+                children: [
+                  Container(
+                    width: double.infinity,
+                    // height: 175,
+                   child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft:Radius.circular(0),
+                    bottomLeft: Radius.circular(15),
+                    bottomRight: Radius.circular(15),
+                    topRight: Radius.circular(0)
+                  ) ,
+                    child: Image.asset(
+                    'images/event1.jpg',
+                    fit: BoxFit.fill ,
+          
+                    ),
+                  ),),
+                  
+                  Container(
+                    padding: EdgeInsets.all(8.0),
+                    child: Row(
+                      
+                      children: [
+                        Icon(Icons.event_note_rounded,color:Colors.white,
+                        size:40),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+          
+                          children: [
+                            Text("ME WARRIOR 2023",style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                                    ),),
+                            Text("Mind Empowered",style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700),),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 3, 15, 5),
+                    child: Row(
+                      children: [
+                        Expanded
+                        (child: Text("India's Biggest Women only Talk show is on the way at our own Cusat. stay tuned...",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,),)),
+                      ],
+                    ),
+                  ),SizedBox(height: 10,),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 3, 15, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                           Container(
+                            child: Row(
+                              children: [
+                                Icon(Icons.date_range,color:Colors.white,
+                              size:35.0),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("13/07/2023",style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.0,)),
+                                    Text("Monday",style: TextStyle(
+                                color: Colors.white,
+                                ))
+                                  ],
+                                )
+                              ],
+                            ),
+                           )
+                  
+                          ],
+                        ),
+                        Container(
+                          width: 175.0,
+                          child: Row(
+                            children: [
+                                Icon(Icons.location_on_outlined,color:Colors.white,
+                                size:35.0),
+                                 
+                                  Expanded(
+                                    child: Text("SOE Auditorium,IT block",style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15.0,),),
+                                  ),
+
+                                ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
-          )
+          ),
+         
+          SizedBox(height: 10,),
+
+          Padding(
+            padding: const EdgeInsets.all(6.0),
+            child: Container(
+              width: double.infinity, 
+              decoration: BoxDecoration(
+                boxShadow: [
+                BoxShadow(
+                  blurRadius: 10.0,
+                )
+              ],
+              color: Colors.indigo[300],
+              borderRadius: BorderRadius.only(
+              topLeft:Radius.circular(0),
+              bottomLeft: Radius.circular(15),
+              bottomRight: Radius.circular(15),
+              topRight: Radius.circular(0)
+            ) ,),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                
+                children: [
+                  Container(
+                    width: double.infinity,
+                    // height: 175,
+                   child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft:Radius.circular(0),
+                    bottomLeft: Radius.circular(15),
+                    bottomRight: Radius.circular(15),
+                    topRight: Radius.circular(0)
+                  ) ,
+                    child: Image.asset(
+                    'images/event2.jpg',
+                    fit: BoxFit.fill ,
+          
+                    ),
+                  ),),
+                  
+                  Container(
+                    padding: EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Icon(Icons.event_note_rounded,color:Colors.white,
+                        size:40),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+          
+                          children: [
+                            Text("ME WARRIOR 2023",style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                                    ),),
+                            Text("Mind Empowered",style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700),),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 3, 15, 5),
+                    child: Row(
+                      children: [
+                        Expanded
+                        (child: Text("India's Biggest Women only Talk show is on the way at our own Cusat. stay tuned...",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,),)),
+                      ],
+                    ),
+                  ),SizedBox(height: 10,),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 3, 15, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                           Container(
+                            child: Row(
+                              children: [
+                                
+                                Icon(Icons.date_range,color:Colors.white,
+                              size:35.0),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("13/07/2023",style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.0,)),
+                                    Text("Monday",style: TextStyle(
+                                color: Colors.white,
+                                ))
+                                  ],
+                                )
+                              ],
+                            ),
+                           )
+                  
+                          ],
+                        ),
+                        Container(
+                          width: 175.0,
+                          child: Row(
+                            children: [
+                                Icon(Icons.location_on_outlined,color:Colors.white,
+                                size:35.0),
+                                 
+                                  Expanded(
+                                    child: Text("SOE Auditorium,IT block",style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15.0,),),
+                                  ),
+
+                                ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
 
           
         ],
   
   ),
-),
+),]),
 
-
+ floatingActionButton: FloatingActionButton(onPressed: (){},
+ child: Icon(Icons.calendar_month,color:Colors.white),),
     );
   }
 }
