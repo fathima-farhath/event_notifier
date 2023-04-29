@@ -1,5 +1,6 @@
+import 'package:event_notifier/screens/splash.dart';
 import 'package:flutter/material.dart';
-import 'screens/feed.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -11,8 +12,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: "Demo App",
-      home:MyFeed()
+      title: "SOE eventee",
+      home: ScreenSplash(),
       );
 
   }
