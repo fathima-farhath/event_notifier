@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import  'package:intl/intl.dart';
 import 'notifications.dart';
 import 'readevent.dart';
 class MyFeed extends StatefulWidget {
@@ -11,6 +12,9 @@ class MyFeed extends StatefulWidget {
 class _MyFeedState extends State<MyFeed> {
   @override
   Widget build(BuildContext context) {
+    DateTime datetime = DateTime.now();
+    String datetime4 = DateFormat(DateFormat.YEAR_ABBR_MONTH_WEEKDAY_DAY).format(datetime);
+    print(datetime4);
     return  Scaffold(
       
       appBar: AppBar(
@@ -165,7 +169,7 @@ body: ListView(
                     children: [
                       Icon(Icons.date_range,color: Colors.white),
                   SizedBox(width: 5,),
-                  Text("27 Apr",style: TextStyle(
+                  Text(datetime4,style: TextStyle(
                 color: Colors.white,
                 fontSize: 16.0,
                 fontWeight: FontWeight.w700
@@ -236,11 +240,6 @@ body: ListView(
                     child: Row(
                       
                       children: [
-                        Icon(Icons.event_note_rounded,color:Colors.white,
-                        size:40),
-                        SizedBox(
-                          width: 5,
-                        ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
           
@@ -323,14 +322,18 @@ body: ListView(
             ),
           ),
          
-          SizedBox(height: 10,),
+          SizedBox(height: 30.0,),
 
-          Padding(
-            padding: const EdgeInsets.all(6.0),
+new GestureDetector(
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>EventRead()));
+            
+        },
+          
             child: Container(
               width: double.infinity, 
               decoration: BoxDecoration(
-                boxShadow: [
+              boxShadow: [
                 BoxShadow(
                   blurRadius: 10.0,
                 )
@@ -342,6 +345,7 @@ body: ListView(
               bottomRight: Radius.circular(15),
               topRight: Radius.circular(0)
             ) ,),
+            
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 
@@ -366,12 +370,10 @@ body: ListView(
                   Container(
                     padding: EdgeInsets.all(8.0),
                     child: Row(
+                      
                       children: [
-                        Icon(Icons.event_note_rounded,color:Colors.white,
-                        size:40),
-                        SizedBox(
-                          width: 5,
-                        ),
+                       
+                       
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
           
@@ -411,7 +413,6 @@ body: ListView(
                            Container(
                             child: Row(
                               children: [
-                                
                                 Icon(Icons.date_range,color:Colors.white,
                               size:35.0),
                                 Column(
@@ -454,6 +455,9 @@ body: ListView(
               ),
             ),
           ),
+            
+          SizedBox(height: 30.0,),
+
 
           
         ],

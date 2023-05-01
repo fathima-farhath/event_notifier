@@ -10,14 +10,16 @@ class Readnotification extends StatefulWidget {
 }
 
 class _ReadnotificationState extends State<Readnotification> {
- launchURL(String url) async {
-  if(await canLaunch(url)){
-    await launch(url,forceWebView:true);
-  }else{
-    throw 'Could not launch $url';
-  }
- }
- 
+//  launchURL(String url) async {
+//   if(await canLaunch(url)){
+//     await launch(url,forceWebView:true);
+//   }else{
+//     throw 'Could not launch $url';
+//   }
+//  }
+ var defaultText=TextStyle(color: Colors.black,fontWeight: FontWeight.bold,decoration: TextDecoration.underline,fontSize: 21.0);
+  var linkText=TextStyle(color: Colors.blue,
+);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,11 +75,35 @@ class _ReadnotificationState extends State<Readnotification> {
               SizedBox(
                 height: 15.0,
               ),
-              Text("Link:",style: TextStyle(fontWeight: FontWeight.bold,decoration: TextDecoration.underline,fontSize: 21.0),),
-           TextButton(onPressed: (){
-            final url="https://www.youtube.com/watch?v=nf4_Ke5B1K8";
-            launchURL(url);
-           }, child:Text("Click here to visit the official website")),
+          //     Text("Link:",style: TextStyle(fontWeight: FontWeight.bold,decoration: TextDecoration.underline,fontSize: 21.0),),
+          //  TextButton(onPressed: (){
+          //   final url="https://www.youtube.com/watch?v=nf4_Ke5B1K8";
+          //   launchURL(url);
+          //  }, child:Text("Click here to visit the official website")),
+              
+              RichText(text: 
+              TextSpan(children: [
+              TextSpan(
+                style: defaultText,
+                text: "Link:\n"
+              ),
+              TextSpan(
+                style: linkText,
+                text: "Click here to go to the official website",
+                recognizer: TapGestureRecognizer()..onTap = () async {
+                  var url=Uri.parse("https://mightytechno.com/create-hyperlink-for-text-in-flutter/");
+                  if(await canLaunchUrl(url)){
+                    await launchUrl(url);
+                  }
+                  else{
+                    throw "Cannot load url";
+                  }
+                }
+              ),]
+              ),),
+              SizedBox(
+                height: 10,
+              ),
               Container(
                 decoration: BoxDecoration(
                     color: Colors.grey,
