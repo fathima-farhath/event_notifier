@@ -64,7 +64,7 @@ class _EditNotificationsState extends State<EditNotifications> {
                     children: [
                       Expanded(
                         child: Text(
-                           "CH Mohammed Koya Scolarship Renewal 2023 for not jnjh kefjekv kerutkw  jierhuwhgwrjhjfie jhfuwehjrrguhrtguthv ritgh8u3g",style: TextStyle(
+                           "CH Mohammed Koya Scolarship Renewal 2023 for not ",style: TextStyle(
                             fontSize: 18,fontWeight: FontWeight.bold,
                           ),
                         ),
