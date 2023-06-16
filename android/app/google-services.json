@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "543686165392",
-    "project_id": "eventnotifier-8982b",
-    "storage_bucket": "eventnotifier-8982b.appspot.com"
+    "project_number": "288614269548",
+    "project_id": "eventy-d1cf8",
+    "storage_bucket": "eventy-d1cf8.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:543686165392:android:475237f87dad85e32c2915",
+        "mobilesdk_app_id": "1:288614269548:android:3c56f72042c0add78ece49",
         "android_client_info": {
-          "package_name": "com.example.blood_donation"
+          "package_name": "com.example.event_notifier"
         }
       },
       "oauth_client": [
         {
-          "client_id": "543686165392-l1lvmmn7vetl119s596kvkpv4igia6ca.apps.googleusercontent.com",
+          "client_id": "288614269548-5d807qjql6kcr0hvf2leplgtffdie948.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCHa1EUJaWGLfJHSLrSP9B1Imz1DvdLVH4"
+          "current_key": "AIzaSyBMMkRBnkSPsKtwND8fSqSQMXuGuEdEe7g"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "543686165392-l1lvmmn7vetl119s596kvkpv4igia6ca.apps.googleusercontent.com",
+              "client_id": "288614269548-5d807qjql6kcr0hvf2leplgtffdie948.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
