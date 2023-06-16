@@ -41,6 +41,8 @@ dependencies:
   firebase_core: ^2.14.0
   cloud_firestore: ^4.8.1
   firebase_storage: ^11.2.3
+  date_time_picker: ^2.1.0
+  flutter_dropdown: ^1.0.1+hotfix.1
 
  
 

@@ -89,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  date_time_picker:
+    dependency: "direct main"
+    description:
+      name: date_time_picker
+      sha256: "6923c568bcb67a66ab7e083708d0adbcae8214b41bb84d49febc17e89e06fc4a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   fake_async:
     dependency: transitive
     description:
@@ -198,6 +206,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_dropdown:
+    dependency: "direct main"
+    description:
+      name: flutter_dropdown
+      sha256: "154dda79cf9787b3c4b7565f2ae52dd42d8935d7255b2bbf660b2bf2d63e5daa"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1+hotfix.1"
   flutter_lints:
     dependency: "direct dev"
     description:
