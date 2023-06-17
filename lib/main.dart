@@ -1,12 +1,17 @@
+import 'package:event_notifier/screens/feed.dart';
 import 'package:flutter/material.dart';
 // import 'screens/notifications.dart';
 // import 'screens/readnotify.dart';
-// import 'screens/feed.dart';
+ import 'screens/addEvent.dart';
+  import 'screens/feed.dart';
 // import 'screens/editevents.dart';
-import 'screens/editnotification.dart';
-
-
-void main() {
+// import 'screens/editnotification.dart';
+//import 'screens/demo.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -17,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Demo App",
-      home:EditNotifications(),
+      home:MyFeed(),
       theme: ThemeData(primarySwatch: Colors.indigo),
       );
 

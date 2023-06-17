@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'notifications.dart';
+import 'addEvent.dart';
 import 'readevent.dart';
 import  'package:intl/intl.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class MyFeed extends StatefulWidget {
   const MyFeed({super.key});
@@ -25,7 +27,14 @@ class _MyFeedState extends State<MyFeed> {
         elevation: 10,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreateEvent(),
+                ),
+              );
+            },
             icon: Icon(Icons.search),
           ),
           IconButton(
@@ -45,7 +54,7 @@ class _MyFeedState extends State<MyFeed> {
           ),
         ],
       ),
-      drawer: Drawer(
+drawer: Drawer(
   child: ListView(
     children:[
      
@@ -212,6 +221,8 @@ class _MyFeedState extends State<MyFeed> {
               ),
             ),
             SizedBox(height: 10),
+
+
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: event.snapshots(),
@@ -222,7 +233,8 @@ class _MyFeedState extends State<MyFeed> {
                       itemBuilder: (context, index) {
                         final DocumentSnapshot eventSnap =
                             snapshot.data!.docs[index];
-
+                        //  final String? imageURL = eventSnap['imageURl'] as String?;
+                        
                         final Timestamp? timestamp =
                             eventSnap['date'] as Timestamp?;
 
@@ -266,6 +278,7 @@ class _MyFeedState extends State<MyFeed> {
                                 children: [
                                   Container(
                                     width: double.infinity,
+                                    
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(0),
@@ -273,10 +286,11 @@ class _MyFeedState extends State<MyFeed> {
                                         bottomRight: Radius.circular(15),
                                         topRight: Radius.circular(0),
                                       ),
-                                      child: Image.asset(
-                                        'images/event1.jpg',
-                                        fit: BoxFit.fill,
-                                      ),
+                                      child: Image.network(
+                                              eventSnap['imageURL'],
+                                              fit: BoxFit.fill,
+                                            )
+                                          
                                     ),
                                   ),
                                   Container(
@@ -353,9 +367,8 @@ class _MyFeedState extends State<MyFeed> {
                                                           fontSize: 15.0,
                                                         ),
                                                       ),
-                                                      Text(
-                                                        DateFormat('hh:mm a')
-                                                            .format(dateTime),
+                                                      Text
+                                                        (eventSnap['time'],
                                                         style: TextStyle(
                                                           color: Colors.white,
                                                         ),

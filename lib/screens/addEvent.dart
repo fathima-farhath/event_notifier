@@ -52,10 +52,7 @@ class _CreateEventState extends State<CreateEvent> {
   TextEditingController _shortDescriptionController = TextEditingController();
   TextEditingController _fullDescriptionController = TextEditingController();
   TextEditingController _linkController = TextEditingController();
-  // TextEditingController _dateController = TextEditingController();
-  // TextEditingController _timeController = TextEditingController();
   TextEditingController _placeController = TextEditingController();
-  // File? _pickedimage;
 String imageUrl='';
 final CollectionReference event=FirebaseFirestore.instance.collection('events');
   void addEvent(){
@@ -71,7 +68,7 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
     'shortDescription':_shortDescriptionController.text,
     'longDescription':_fullDescriptionController.text,
     'link':_linkController.text,
-    'imageURl':imageUrl,};
+    'imageURL':imageUrl,};
     
    event.add(data);
   }
@@ -158,23 +155,7 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                 const SizedBox(
                   height: 20,
                 ),
-                // DateTimePicker(
-                //   icon: const Icon(Icons.event),
-                //   initialDate: DateTime.now(),
-                //   firstDate: DateTime(2000),
-                //   lastDate: DateTime(2100),
-                //   dateLabelText: 'Date',
-                //   onChanged: (val) => print(val),
-                //   validator: (val) {
-                //     print(val);
-                //     return null;
-                //   },
-                //   onSaved: (val) => print(val),
-                // ),
-                // const SizedBox(
-                //   height: 20,
-                // ),
-                // Date
+                
                 Row(
   children: [
     Expanded(
