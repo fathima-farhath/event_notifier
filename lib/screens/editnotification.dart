@@ -1,4 +1,6 @@
+import 'addNotification.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EditNotifications extends StatefulWidget {
   const EditNotifications({super.key});
@@ -8,15 +10,27 @@ class EditNotifications extends StatefulWidget {
 }
 
 class _EditNotificationsState extends State<EditNotifications> {
+  final CollectionReference notification=FirebaseFirestore.instance.collection('notifications');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit Notifications"),
+        title: Text("Notifications"),
         
       ),
 
-     body: Padding(
+     body: StreamBuilder(
+        stream: notification.orderBy('timestamp', descending: false).snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                final DocumentSnapshot notification= snapshot.data!.docs.reversed.toList()[index];
+
+                return 
+                Padding(
        padding: const EdgeInsets.all(8.0),
        child: Container(
             // color: Colors.amber,
@@ -48,8 +62,8 @@ class _EditNotificationsState extends State<EditNotifications> {
                     child: CircleAvatar(
                       // backgroundColor: Colors.red,
                       radius: 30,
-                      child: Text("C",style: 
-                      TextStyle(
+                      child: Text(notification['title'].substring(0,1),
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                       ),),
@@ -64,16 +78,12 @@ class _EditNotificationsState extends State<EditNotifications> {
                     children: [
                       Expanded(
                         child: Text(
-                           "CH Mohammed Koya Scolarship Renewal 2023 for not ",style: TextStyle(
+                           notification['title'],style: TextStyle(
                             fontSize: 18,fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      // Text(
-                      //   "Mind Empowered".toString(),style: TextStyle(
-                      //     fontSize: 18,
-                       
-                      // ),)
+                      
                     ],
                      
                   ),
@@ -91,6 +101,29 @@ class _EditNotificationsState extends State<EditNotifications> {
               ],
             ),
           ),
-     ),);
+     );
+     },
+            );
+          }
+          return Container();  
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context,
+          MaterialPageRoute(builder: 
+          (context) => AddNotification()),
+          );
+        },
+        child: Icon(Icons.add,
+         color: Colors.white,
+        ),
+        elevation: 2.0,
+      
+      ),
+      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      
+     );
   }
 }

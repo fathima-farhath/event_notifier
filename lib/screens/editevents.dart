@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AdminTeacher extends StatefulWidget {
   const AdminTeacher({super.key});
@@ -8,6 +9,8 @@ class AdminTeacher extends StatefulWidget {
 }
 
 class _AdminTeacherState extends State<AdminTeacher> {
+   final CollectionReference event =
+      FirebaseFirestore.instance.collection('events');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,10 +19,18 @@ class _AdminTeacherState extends State<AdminTeacher> {
         
       ),
 
-     body: Padding(
-       padding: const EdgeInsets.all(8.0),
-       child: Container(
-            // color: Colors.amber,
+     body: StreamBuilder(
+        stream: event.orderBy('timestamp',descending: false).snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                final DocumentSnapshot eventSnap =snapshot.data!.docs.reversed.toList()[index];
+
+                return Padding(
+                padding: const EdgeInsets.all(8.0),
+               child: Container(
             
             height: 80,
             decoration: BoxDecoration(
@@ -48,7 +59,7 @@ class _AdminTeacherState extends State<AdminTeacher> {
                     child: CircleAvatar(
                       // backgroundColor: Colors.red,
                       radius: 30,
-                      child: Text("M",style: 
+                      child: Text(eventSnap['title'].substring(0, 1),style: 
                       TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -61,12 +72,12 @@ class _AdminTeacherState extends State<AdminTeacher> {
                   crossAxisAlignment:  CrossAxisAlignment.start,
                   children: [
                     Text(
-                       "ME Warrior 2023",style: TextStyle(
+                       eventSnap['title'],style: TextStyle(
                         fontSize: 18,fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      "Mind Empowered".toString(),style: TextStyle(
+                      eventSnap['organizer'].toString(),style: TextStyle(
                         fontSize: 18,
                      
                     ),)
@@ -86,7 +97,20 @@ class _AdminTeacherState extends State<AdminTeacher> {
               ],
             ),
           ),
-     ),
+     );
+      },
+            );
+          }
+          return Container();  
+        },
+      ),
+      floatingActionButton: FloatingActionButton(onPressed: 
+      (){},
+      child: Icon(Icons.add),
+      elevation: 0.2,
+      ),
+      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       );
 
         
