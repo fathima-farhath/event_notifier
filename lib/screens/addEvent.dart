@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'editevents.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -61,14 +61,16 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
     'place':_placeController.text,
      'time':selectedFromTime!.format(context),
      'toTime': selectedToTime!.format(context),
-    // 'date':,
     'date':  DateTime.parse(fromDateString!),
     'toDate':DateTime.parse(toDateString!),
     'organizer':_organizerController.text,
     'shortDescription':_shortDescriptionController.text,
     'longDescription':_fullDescriptionController.text,
     'link':_linkController.text,
-    'imageURL':imageUrl,};
+    'imageURL':imageUrl,
+    'timestamp':FieldValue.serverTimestamp(),
+    'id':FieldValue.increment(1),
+    };
     
    event.add(data);
   }
@@ -434,6 +436,12 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                   child: ElevatedButton(
                     onPressed: () {
                       addEvent();
+                      Navigator.push(
+                      context,
+                        MaterialPageRoute(
+                      builder: (context) => AdminTeacher(),
+                ),
+              );
                     },
                     style: ButtonStyle(
                       minimumSize: MaterialStatePropertyAll(Size(2500,50)),
