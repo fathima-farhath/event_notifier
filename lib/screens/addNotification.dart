@@ -82,7 +82,7 @@ class _AddNotificationState extends State<AddNotification> {
                       ),
                       fillColor: Color.fromARGB(255, 255, 255, 255),
                       filled: true,
-                      contentPadding: const EdgeInsets.all(20),
+                      contentPadding: const EdgeInsets.all(15),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -99,7 +99,7 @@ class _AddNotificationState extends State<AddNotification> {
                   width: double.infinity,
                   height: 50,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                   child: TextFormField(
                     controller: _broadTitleController,
@@ -111,7 +111,7 @@ class _AddNotificationState extends State<AddNotification> {
                       ),
                       fillColor: Color.fromARGB(255, 255, 255, 255),
                       filled: true,
-                      contentPadding: const EdgeInsets.all(20),
+                      contentPadding: const EdgeInsets.all(15),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -124,24 +124,26 @@ class _AddNotificationState extends State<AddNotification> {
                 SizedBox(
                   height:20,
                 ),
-                Container(
+               Container(
                   width: double.infinity,
-                  height: 50,
+                  height: 150,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                      color: Colors.black,
+                    )
                   ),
                   child: TextFormField(
                     controller: _shortDescriptionController,
                     decoration: InputDecoration(
+                      border:InputBorder.none,
                       labelText: 'Breif Notification Description',
                       // labelStyle: TextStyle(fontSize: 18.0),
-                      border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5)
-                      ),
                       fillColor: Color.fromARGB(255, 255, 255, 255),
                       filled: true,
-                      contentPadding: const EdgeInsets.all(20),
+                      contentPadding: const EdgeInsets.all(15),
                     ),
+                    maxLines:null,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter some text';
@@ -157,21 +159,21 @@ class _AddNotificationState extends State<AddNotification> {
  // para 1 Description
                 Container(
                   width: double.infinity,
-                  height: 50,
+                 height: 200,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                      color: Colors.black,
+                    ),),
                   child: TextFormField(
                     controller: _para1DescController,
                     decoration: InputDecoration(
                       labelText: 'Notification Description paragraph 1',
                       // labelStyle: TextStyle(fontSize: 18.0),
-                      border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5)
-                      ),
+                      border: InputBorder.none,
                       fillColor: Color.fromARGB(255, 255, 255, 255),
                       filled: true,
-                      contentPadding: const EdgeInsets.all(20),
+                      contentPadding: const EdgeInsets.all(15),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -186,23 +188,23 @@ class _AddNotificationState extends State<AddNotification> {
                 // para2 Description
                 Container(
                       width: double.infinity,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color.fromARGB(255, 255, 255, 255),
-                      ),
+                      height: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                      color: Colors.black,
+                    )),
                         child: TextFormField(
                           controller: _para2DescController,
                           // Set maxLines to null for a multi-line text area
                           decoration: InputDecoration(
                             labelText: 'Notification Description paragraph 2',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
+                            border: InputBorder.none,
                             fillColor: Color.fromARGB(255, 255, 255, 255),
                             filled: true,
-                            contentPadding: const EdgeInsets.all(20),
+                            contentPadding: const EdgeInsets.all(15),
                           ),
+                          maxLines: null,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter some text';
@@ -234,7 +236,7 @@ class _AddNotificationState extends State<AddNotification> {
                       ),
                       fillColor: Color.fromARGB(255, 255, 255, 255),
                       filled: true,
-                      contentPadding: const EdgeInsets.all(20),
+                      contentPadding: const EdgeInsets.all(15),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
