@@ -115,7 +115,7 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                       ),
                       fillColor: Color.fromARGB(255, 255, 255, 255),
                       filled: true,
-                      contentPadding: const EdgeInsets.all(20),
+                      contentPadding: const EdgeInsets.all(15),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -144,7 +144,7 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                       ),
                       fillColor: Color.fromARGB(255, 255, 255, 255),
                       filled: true,
-                      contentPadding: const EdgeInsets.all(20),
+                      contentPadding: const EdgeInsets.all(15),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -268,7 +268,7 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                       ),
                       fillColor: Color.fromARGB(255, 255, 255, 255),
                       filled: true,
-                      contentPadding: const EdgeInsets.all(20),
+                      contentPadding: const EdgeInsets.all(10),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -283,11 +283,13 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                 // short Description
                 Container(
                       width: double.infinity,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color.fromARGB(255, 255, 255, 255),
-                      ),
+                      height: 150,
+                       decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                      color: Colors.black,
+                    )
+                  ),
                         child: TextFormField(
                           controller: _shortDescriptionController,
                           // Set maxLines to null for a multi-line text area
@@ -298,8 +300,9 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                             ),
                             fillColor: Color.fromARGB(255, 255, 255, 255),
                             filled: true,
-                            contentPadding: const EdgeInsets.all(20),
+                            contentPadding: const EdgeInsets.all(15),
                           ),
+                          maxLines:null,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter some text';
@@ -316,9 +319,12 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
 
                   Container(
                   width: double.infinity,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
+                  height: 200,
+                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                      color: Colors.black,
+                    )
                   ),
                   child: TextFormField(
                     controller: _fullDescriptionController,
@@ -328,10 +334,12 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                       border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5)
                       ),
+                    
                       fillColor: Color.fromARGB(255, 255, 255, 255),
                       filled: true,
-                      contentPadding: const EdgeInsets.all(20),
+                      contentPadding: const EdgeInsets.all(15),
                     ),
+                    maxLines:null,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter some text';
@@ -363,7 +371,7 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                       ),
                       fillColor: Color.fromARGB(255, 255, 255, 255),
                       filled: true,
-                      contentPadding: const EdgeInsets.all(20),
+                      contentPadding: const EdgeInsets.all(15),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
