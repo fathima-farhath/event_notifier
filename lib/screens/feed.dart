@@ -225,15 +225,14 @@ drawer: Drawer(
 
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: event.snapshots(),
+                stream: event.orderBy('timestamp', descending: false).snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return ListView.builder(
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
                         final DocumentSnapshot eventSnap =
-                            snapshot.data!.docs[index];
-                        //  final String? imageURL = eventSnap['imageURl'] as String?;
+                            snapshot.data!.docs.reversed.toList()[index];
                         
                         final Timestamp? timestamp =
                             eventSnap['date'] as Timestamp?;
