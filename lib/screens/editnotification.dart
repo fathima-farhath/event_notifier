@@ -1,4 +1,6 @@
 import 'addNotification.dart';
+import 'package:flutter/cupertino.dart';
+import 'updateNotification.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -11,7 +13,36 @@ class EditNotifications extends StatefulWidget {
 
 class _EditNotificationsState extends State<EditNotifications> {
   final CollectionReference notification=FirebaseFirestore.instance.collection('notifications');
-
+  void deleteNotification(docId){
+    notification.doc(docId).delete();
+  }
+  void _confirmDelete(String docId) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CupertinoAlertDialog(
+        title: Text('Confirm Delete'),
+        content: Text('Are you sure you want to delete this notification?'),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () {
+              deleteNotification(docId);
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('Delete'),
+            isDestructiveAction: true,
+          ),
+          CupertinoDialogAction(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('Cancel'),
+          ),
+        ],
+      );
+    },
+  );
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +109,8 @@ class _EditNotificationsState extends State<EditNotifications> {
                     children: [
                       Expanded(
                         child: Text(
-                           notification['title'],style: TextStyle(
+                           notification['title'],
+                           style: TextStyle(
                             fontSize: 18,fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -90,10 +122,35 @@ class _EditNotificationsState extends State<EditNotifications> {
                 ),
                 Row(
                   children: [
-                     IconButton(onPressed: (){}, icon: Icon(Icons.edit,
-                     size: 30,
-                      color: Colors.blue)),
-                    IconButton(onPressed: (){}, icon: Icon(Icons.delete,
+                     IconButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UpdateNotification(),
+        settings: RouteSettings(
+         arguments: {
+          'title':notification['title'],
+          'broadTitle':notification['broadTitle'],
+          'shortDescription':notification['shortDescription'],
+          'para1Desc':notification['para1Desc'],
+          'para2Desc':notification['para2Desc'],
+          'link':notification['link'],
+          'id':notification.id,
+         }
+            ),
+          ),
+        );
+      },
+      icon: Icon(
+        Icons.edit,
+        size: 30,
+        color: Colors.blue,
+      ),
+    ),
+                    IconButton(onPressed: (){
+                      _confirmDelete(notification.id);
+                    }, icon: Icon(Icons.delete,
                     size: 30,
                     color: Colors.red,))
                   ],
@@ -108,22 +165,24 @@ class _EditNotificationsState extends State<EditNotifications> {
           return Container();  
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context,
-          MaterialPageRoute(builder: 
-          (context) => AddNotification()),
-          );
-        },
-        child: Icon(Icons.add,
-         color: Colors.white,
+
+      floatingActionButton: Align(
+        alignment: Alignment.bottomCenter,
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddNotification()),
+            );
+          },
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          elevation: 2.0,
         ),
-        elevation: 2.0,
-      
       ),
-      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      
+    
      );
   }
 }

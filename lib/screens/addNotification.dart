@@ -34,22 +34,34 @@ class _AddNotificationState extends State<AddNotification> {
     'title':_titleController.text,
     'broadTitle':_broadTitleController.text,
     'shortDescription':_shortDescriptionController.text,
-
     'para1Desc':_para1DescController.text,
     'para2Desc':_para2DescController.text,
-    //  'time':selectedFromTime!.format(context),
-    //  'toTime': selectedToTime!.format(context),
-    // 'date':  DateTime.parse(fromDateString!),
-    // 'toDate':DateTime.parse(toDateString!),
-    // 'longDescription':_fullDescriptionController.text,
     'link':_linkController.text,
-    'timestamp': FieldValue.serverTimestamp(),
-    
-    // 'imageURL':imageUrl,
+    'timestamp': FieldValue.serverTimestamp(),  
+    'imageURL':imageUrl,
     };
     
    notification.add(data);
   }
+  void _showSuccessDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Success'),
+        content: const Text('Notification added successfully!'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => EditNotifications(),),); // Close the dialog
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+}
   @override
   Widget build(BuildContext context) {
    return Scaffold(
@@ -175,6 +187,7 @@ class _AddNotificationState extends State<AddNotification> {
                       filled: true,
                       contentPadding: const EdgeInsets.all(15),
                     ),
+                    maxLines:null,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter some text';
@@ -205,12 +218,7 @@ class _AddNotificationState extends State<AddNotification> {
                             contentPadding: const EdgeInsets.all(15),
                           ),
                           maxLines: null,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter some text';
-                            }
-                            return null;
-                          },
+                          
                         ),
                       ),
                     
@@ -238,97 +246,92 @@ class _AddNotificationState extends State<AddNotification> {
                       filled: true,
                       contentPadding: const EdgeInsets.all(15),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
+                    
                   )
                 ),
 
                 SizedBox(height:20,),
 
                 //attach image
-                // ElevatedButton(
-                //   onPressed: () async {
-                //     // _pickedImage = (await ImagePicker()
-                //     //     .pickImage(source: ImageSource.camera))!;
-                // ImagePicker imagePicker=ImagePicker();  
-                //   XFile? file= await imagePicker.pickImage(source: ImageSource.camera);
-                // if (file==null) return;
+                ElevatedButton(
+                  onPressed: () async {
+                    // _pickedImage = (await ImagePicker()
+                    //     .pickImage(source: ImageSource.camera))!;
+                ImagePicker imagePicker=ImagePicker();  
+                  XFile? file= await imagePicker.pickImage(source: ImageSource.camera);
+                if (file==null) return;
 
-                //     // String uniqueFilename=DateTime.now().millisecondsSinceEpoch.toString();
+                    String uniqueFilename=DateTime.now().millisecondsSinceEpoch.toString();
 
 
 
-                //     // Reference referenceRoot=FirebaseStorage.instance.ref();
-                //     // Reference ReferenceDirImage=referenceRoot.child('images');
-                //     // Reference ReferenceImageToUpload=ReferenceDirImage.child(uniqueFilename);
+                    Reference referenceRoot=FirebaseStorage.instance.ref();
+                    Reference ReferenceDirImage=referenceRoot.child('Notimages');
+                    Reference ReferenceImageToUpload=ReferenceDirImage.child(uniqueFilename);
                   
-                //     // try{
-                //     // await ReferenceImageToUpload.putFile(File(file!.path));
-                //     // imageUrl=await ReferenceImageToUpload.getDownloadURL();
-                //     // }
-                //     // catch(error){
+                    try{
+                    await ReferenceImageToUpload.putFile(File(file!.path));
+                    imageUrl=await ReferenceImageToUpload.getDownloadURL();
+                    }
+                    catch(error){
                       
-                //     // }
-                //   },
-                //   style: ButtonStyle(
+                    }
+                  },
+                  style: ButtonStyle(
                 
-                //      backgroundColor:
-                //         MaterialStateProperty.all<Color>(Color.fromARGB(255, 185, 185, 185),),
-                //     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                //       RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(5),
-                //       ),
-                //     ),
-                //   ),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     children: const [
-                //       Icon(
-                //         Icons.attach_file,
-                //         color: Colors.black,
-                //       ),
-                //       SizedBox(
-                //         width: 10,
-                //       ),
-                //       Text(
-                //         'Attach an Image',
-                //         style: TextStyle(color: Colors.black),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-
-                ElevatedButton(onPressed: (){
-
-                }, child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.file_copy,
-                    color: Colors.black,
-                    ),
-                     SizedBox(
-                        width: 10,
-                      ),
-                    Text("Attach a file",
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),)
-                    
-                  ],
-
-                ),
-                style: ButtonStyle(
-                  backgroundColor:MaterialStateProperty.all<Color>(Color.fromARGB(255, 185, 185, 185)!),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                     backgroundColor:
+                        MaterialStateProperty.all<Color>(Color.fromARGB(255, 185, 185, 185),),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
-                ),),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(
+                        Icons.attach_file,
+                        color: Colors.black,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Attach an Image',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // ElevatedButton(onPressed: (){
+
+                // }, child: Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Icon(Icons.file_copy,
+                //     color: Colors.black,
+                //     ),
+                //      SizedBox(
+                //         width: 10,
+                //       ),
+                //     Text("Attach a file",
+                //         style: TextStyle(
+                //           color: Colors.black,
+                //         ),)
+                    
+                //   ],
+
+                // ),
+                // style: ButtonStyle(
+                //   backgroundColor:MaterialStateProperty.all<Color>(Color.fromARGB(255, 185, 185, 185)!),
+                //   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                //       RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(5),
+                //       ),
+                //     ),
+                // ),),
                 
                 
                 //submit button
@@ -339,9 +342,11 @@ class _AddNotificationState extends State<AddNotification> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                       addNotification();
-                       Navigator.push(context, MaterialPageRoute(builder: (context) => EditNotifications(),),);
-                    },
+                      if (_formKey.currentState!.validate()) {
+                      addNotification();
+                      _showSuccessDialog(context); 
+                                       }
+                       },
                     style: ButtonStyle(
                       minimumSize: MaterialStatePropertyAll(Size(2500,50)),
                           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
