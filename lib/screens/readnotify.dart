@@ -2,8 +2,12 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'feed.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Readnotification extends StatefulWidget {
+  
   const Readnotification({super.key});
+   
 
   @override
   State<Readnotification> createState() => _ReadnotificationState();
@@ -17,14 +21,17 @@ class _ReadnotificationState extends State<Readnotification> {
 //     throw 'Could not launch $url';
 //   }
 //  }
+// final String documentId;
+// ReadNotification({required this.documentId});
  var defaultText=TextStyle(color: Colors.black,fontWeight: FontWeight.bold,decoration: TextDecoration.underline,fontSize: 21.0);
   var linkText=TextStyle(color: Colors.blue,
 );
   @override
   Widget build(BuildContext context) {
+    final args=ModalRoute.of(context)!.settings.arguments as Map<String,dynamic>;
     return Scaffold(
      appBar: AppBar(
-      title: Text("CHMS"),
+      title: Text(args['title']),
       centerTitle: true,
       elevation: 10,
      
@@ -49,7 +56,7 @@ class _ReadnotificationState extends State<Readnotification> {
             Row(
               children: [
                 Expanded(child: 
-                  Text("C H Mohammed Koya Scolarship Renewal 2023",style: TextStyle(
+                  Text(args['broadTitle'],style: TextStyle(
                     color: Colors.black,
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -69,40 +76,64 @@ class _ReadnotificationState extends State<Readnotification> {
               Row(
                 children: [
                   Expanded(child: 
-                  Text("The scholarships are open to students who are pursuing undergraduate or graduate studies in any field of study at any accredited university in the United States. For more information and to apply, please visit the CH Muhammed Koya website. A new scheme has been created by the Directorate of Minority Welfare Government of Kerala to provide educational opportunities among the girl applicant of minority communities such as the Muslim Community, Converted Christian, and Latin Catholic.\n\nThe scholarship amount of Rs. 5,000/6,000/7,000 will be provided to the students carrying out UG/PG/professional courses under the CH Muhammed Koya Scholarship. This scholarship will only be provided to the girl students who belong to the minority communities such as Muslims, Sikhs, Christians, Buddhists, Jain, and Zoroastrians (Parsis).The scholarships are open to students who are pursuing undergraduate or graduate studies in any field of study at any accredited university in the United States. For more information and to apply, please visit the CH Muhammed Koya website. A new scheme has been created by the Directorate of Minority Welfare Government of Kerala to provide educational opportunities among the girl applicant of minority communities such as the Muslim Community, Converted Christian, and Latin Catholic.",style: TextStyle(fontSize: 18.0,),))
+                  Text(args['para1Desc'],style: TextStyle(fontSize: 18.0,),))
                 ],
               ),
               SizedBox(
                 height: 15.0,
+              ),
+              Row(
+                children: [
+                  Expanded(child: 
+                  Text(args['para2Desc'],style: TextStyle(fontSize: 18.0,),))
+                ],
               ),
           //     Text("Link:",style: TextStyle(fontWeight: FontWeight.bold,decoration: TextDecoration.underline,fontSize: 21.0),),
           //  TextButton(onPressed: (){
           //   final url="https://www.youtube.com/watch?v=nf4_Ke5B1K8";
           //   launchURL(url);
           //  }, child:Text("Click here to visit the official website")),
-              
-              RichText(text: 
-              TextSpan(children: [
-              TextSpan(
-                style: defaultText,
-                text: "Link:\n"
-              ),
-              TextSpan(
-                style: linkText,
-                text: "Click here to go to the official website",
-                recognizer: TapGestureRecognizer()..onTap = () async {
-                  var url=Uri.parse("https://mightytechno.com/create-hyperlink-for-text-in-flutter/");
-                  if(await canLaunchUrl(url)){
-                    await launchUrl(url);
-                  }
-                  else{
-                    throw "Cannot load url";
-                  }
-                }
-              ),]
-              ),),
               SizedBox(
-                height: 10,
+                height: 15.0,
+              ),
+            
+              
+              // TextSpan(
+              //   style: linkText,
+              //   text: "Click here to go to the official website",
+              //   recognizer: TapGestureRecognizer()..onTap = () async {
+              //     var url=Uri.parse(args['link']);
+              //     if(await canLaunchUrl(url)){
+              //       await launchUrl(url);
+              //     }
+              //     else{
+              //       throw "Cannot load url";
+              //     }
+              //   }
+              // ),]
+              // ),),
+             
+            Text("Link",
+            style: TextStyle(
+              fontSize: 15,
+
+            ),),
+            GestureDetector(
+              onTap: () async {
+                final url = args['link']; // Replace with your desired URL
+                final uri = Uri.parse(url);
+                await launchUrl(uri);
+              },
+              child: Text(
+                args['link'],
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+              SizedBox(
+                height: 15.0,
               ),
               Container(
                 decoration: BoxDecoration(
@@ -115,6 +146,9 @@ class _ReadnotificationState extends State<Readnotification> {
                       ),
           
                   ),
+
+
+
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

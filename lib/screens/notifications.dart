@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'readnotify.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class MyNotifications extends StatefulWidget {
   const MyNotifications({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class _MyNotificationsState extends State<MyNotifications> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         title: Text("Notifications"),
@@ -31,6 +33,10 @@ class _MyNotificationsState extends State<MyNotifications> {
               itemBuilder: (context, index) {
                 final DocumentSnapshot notificationSnap =
                     snapshot.data!.docs.reversed.toList()[index];
+                final timestamp = notificationSnap['timestamp'] as Timestamp;
+                final dateTime = timestamp.toDate();
+                final formatter = DateFormat('MM/dd/yyyy  hh:mm a');
+                final formattedDateTime = formatter.format(dateTime);
 
                 return Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -83,9 +89,9 @@ class _MyNotificationsState extends State<MyNotifications> {
                         ),
                       ),
                       Container(
-                        decoration: BoxDecoration(
-                          color: Colors.indigo[300],
-                          borderRadius: BorderRadius.only(
+                            decoration: BoxDecoration(
+                            color: Colors.indigo[300],
+                            borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(0),
                             topRight: Radius.circular(0),
                             bottomLeft: Radius.circular(12),
@@ -112,8 +118,17 @@ class _MyNotificationsState extends State<MyNotifications> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => Readnotification(
-                                        // documentID: notificationSnap.id,
+                                      builder: (context) => Readnotification(),
+                                      settings: RouteSettings(
+                                        arguments: {
+                                          'title':notificationSnap['title'],
+                                          'broadTitle':notificationSnap['broadTitle'],
+                                          'shortDescription':notificationSnap['shortDescription'],
+                                          'para1Desc':notificationSnap['para1Desc'],
+                                          'para2Desc':notificationSnap['para2Desc'],
+                                          'link':notificationSnap['link'],
+                                          'id':notificationSnap.id,
+                                        }
                                       ),
                                     ),
                                   );
@@ -125,8 +140,12 @@ class _MyNotificationsState extends State<MyNotifications> {
                         ),
                       ),
                       SizedBox(
-                        height: 25.0,
+                        height:1.0,
                       ),
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: Text(formattedDateTime),
+                      )
                     ],
                   ),
                 );
