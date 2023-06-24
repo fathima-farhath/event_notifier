@@ -1,16 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import 'addEvent.dart';
+import 'updateEvent.dart';
 
-class AdminTeacher extends StatefulWidget {
-  const AdminTeacher({super.key});
+class EditEvent extends StatefulWidget {
+  const EditEvent({super.key});
 
   @override
-  State<AdminTeacher> createState() => _AdminTeacherState();
+  State<EditEvent> createState() => _EditEventState();
 }
 
-class _AdminTeacherState extends State<AdminTeacher> {
+class _EditEventState extends State<EditEvent> {
    final CollectionReference event =
       FirebaseFirestore.instance.collection('events');
+void _confirmDelete(String docId) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CupertinoAlertDialog(
+        title: Text('Confirm Delete'),
+        content: Text('Are you sure you want to delete this event?'),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () {
+              deleteEvent(docId);
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('Delete'),
+            isDestructiveAction: true,
+          ),
+          CupertinoDialogAction(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('Cancel'),
+          ),
+        ],
+      );
+    },
+  );
+}
+ void deleteEvent(docId){
+    event.doc(docId).delete();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,29 +100,77 @@ class _AdminTeacherState extends State<AdminTeacher> {
                     ),
                   ),
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment:  CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                       eventSnap['title'],style: TextStyle(
-                        fontSize: 18,fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 8.0, 0, 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                         
+                        children: [
+                          Container(
+                            width: 200,
+                            child: Row(
+                               children: [
+                                Expanded(
+                                  child: Text(
+                                     eventSnap['title'],
+                                     style: TextStyle(
+                                      fontSize: 18,fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                
+                              ],
+                               
+                            ),
+                          ),
+                        ],
+                        
                       ),
-                    ),
-                    Text(
-                      eventSnap['organizer'].toString(),style: TextStyle(
-                        fontSize: 18,
-                     
-                    ),)
-                  ],
-     
+                      Row(
+                        children: [
+                          Text(eventSnap['organizer']),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
+                
                 Row(
                   children: [
-                     IconButton(onPressed: (){}, icon: Icon(Icons.edit,
+                     IconButton(onPressed: (){
+                      Navigator.push(
+                      context,
+                        MaterialPageRoute(
+                      builder: (context) => UpdateEvent(),
+                      settings:RouteSettings(
+                        arguments: {
+                          'title':eventSnap['title'],
+                          'place': eventSnap['place'],
+                          'time':eventSnap['time'] ,
+                          'toTime': eventSnap['toTime'],
+                          'date': eventSnap['date'],
+                          'toDate': eventSnap['toDate'],
+                          'organizer': eventSnap['organizer'],
+                          'shortDescription': eventSnap['shortDescription'],
+                          'longDescription1':  eventSnap['longDescription1'],
+                          'longDescription2':eventSnap['longDescription2'] ,
+                          'link': eventSnap['link'],
+                          'id':eventSnap.id,
+                          'imageURL':eventSnap['imageURL'], // Include the imageURL field
+                          'timestamp': FieldValue.serverTimestamp(),
+                        }
+                      )
+                      ),);
+                     }, icon: Icon(Icons.edit,
                      size: 30,
                       color: Colors.blue)),
-                    IconButton(onPressed: (){}, icon: Icon(Icons.delete,
+                    IconButton(onPressed: (){
+                     _confirmDelete(eventSnap.id);
+
+                    }, icon: Icon(Icons.delete,
                     size: 30,
                     color: Colors.red,))
                   ],
@@ -105,7 +186,9 @@ class _AdminTeacherState extends State<AdminTeacher> {
         },
       ),
       floatingActionButton: FloatingActionButton(onPressed: 
-      (){},
+      (){
+                       Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEvent(),),);
+      },
       child: Icon(Icons.add),
       elevation: 0.2,
       ),

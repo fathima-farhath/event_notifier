@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'notifications.dart';
 import 'addEvent.dart';
 import 'readevent.dart';
+import 'calendar.dart';
 import  'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -237,6 +238,11 @@ drawer: Drawer(
                         final Timestamp? timestamp =
                             eventSnap['date'] as Timestamp?;
 
+                        final String? imageURL = eventSnap['imageURL'];
+
+    // Check if imageURL is not null or empty
+                        final bool hasImage = imageURL != null && imageURL.isNotEmpty;
+
                         // Field validation
                         if (timestamp == null) {
                           // Handle case where 'date' field is missing or null
@@ -244,7 +250,7 @@ drawer: Drawer(
                         }
 
                         final DateTime dateTime = timestamp.toDate();
-
+                       
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 20.0),
                           child: GestureDetector(
@@ -253,6 +259,24 @@ drawer: Drawer(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => EventRead(),
+                                  settings: RouteSettings(
+                                    arguments: {
+                                      'title':eventSnap['title'],
+                                      'place': eventSnap['place'],
+                                      'time':eventSnap['time'] ,
+                                      'toTime': eventSnap['toTime'],
+                                      'date': eventSnap['date'],
+                                      'toDate': eventSnap['toDate'],
+                                      'organizer': eventSnap['organizer'],
+                                      'shortDescription': eventSnap['shortDescription'],
+                                      'longDescription1':  eventSnap['longDescription1'],
+                                      'longDescription2':eventSnap['longDescription2'] ,
+                                      'link': eventSnap['link'],
+                                      'id':eventSnap.id,
+                                      'imageURL':eventSnap['imageURL'], // Include the imageURL field
+                                      'timestamp': FieldValue.serverTimestamp(),
+                                    }
+                                  )
                                 ),
                               );
                             },
@@ -275,6 +299,7 @@ drawer: Drawer(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  if (hasImage) 
                                   Container(
                                     width: double.infinity,
                                     
@@ -286,7 +311,7 @@ drawer: Drawer(
                                         topRight: Radius.circular(0),
                                       ),
                                       child: Image.network(
-                                              eventSnap['imageURL'],
+                                              imageURL!,
                                               fit: BoxFit.fill,
                                             )
                                           
@@ -296,25 +321,38 @@ drawer: Drawer(
                                     padding: EdgeInsets.all(8.0),
                                     child: Row(
                                       children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              eventSnap['title'] ?? '',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w700,
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      eventSnap['title'] ?? '',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 20,
+                                                        fontWeight: FontWeight.w700,
+                                                      ),
+                                                      overflow: TextOverflow.ellipsis, // Handles text overflow by ellipsis
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ),
-                                            Text(
-                                              eventSnap['organizer'] ?? '',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w700),
-                                            ),
-                                          ],
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    eventSnap['organizer'] ?? '',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -322,19 +360,12 @@ drawer: Drawer(
                                   Padding(
                                     padding:
                                         const EdgeInsets.fromLTRB(15, 3, 15, 5),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            eventSnap['shortDescription'] ?? '',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16.0,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                    child:Row(
+                                        children: [
+                                          Expanded(child: 
+                                          Text(eventSnap['shortDescription'],style: TextStyle(fontSize: 16.0,color: Colors.white),))
+                                        ],
+                                      ),
                                   ),
                                   SizedBox(height: 10),
                                   Padding(
@@ -420,7 +451,10 @@ drawer: Drawer(
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: 
+          (context) => ScreenCalendar(),));
+        },
         child: Icon(Icons.calendar_month, color: Colors.white),
       ),
     );
