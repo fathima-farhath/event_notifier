@@ -1,9 +1,10 @@
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+//import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'datalist.dart';
-import 'calendar.dart';
+
+import 'signup.dart';
 
 class ScreenUser extends StatefulWidget {
   const ScreenUser({super.key});
@@ -128,8 +129,7 @@ class _ScreenUserState extends State<ScreenUser> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                             ScreenCalendar()),
+                                        builder: (context) => registerScreen()),
                                   );
                                 },
                                 child: Text('Lets go'),
