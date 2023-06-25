@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 // import 'screens/readnotify.dart';
 // import 'screens/feed.dart';
 // import 'screens/editevents.dart';
-import 'screens/editnotification.dart';
+//import 'screens/editnotification.dart';
 import 'screens/splash.dart';
 
 void main() {

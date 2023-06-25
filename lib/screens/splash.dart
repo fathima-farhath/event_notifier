@@ -1,5 +1,5 @@
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+//import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/material.dart';
 import 'typeofuser.dart';
 // import 'package:google_fonts/google_fonts.dart';
@@ -80,12 +80,6 @@ class _ScreenSplashState extends State<ScreenSplash> {
   }
 
   Future<void> gotoUser() async {
-    // showDialog(
-    //     context: context,
-    //     builder: (context) {
-    //       return Center(child: CircularProgressIndicator());
-    //     });
-
     await Future.delayed(Duration(milliseconds: 1500));
     Navigator.of(context).push(
       MaterialPageRoute(
