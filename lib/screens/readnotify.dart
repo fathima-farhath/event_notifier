@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'feed.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:http/http.dart' as http;
+import 'dart:io';
 class Readnotification extends StatefulWidget {
   
   const Readnotification({super.key});
@@ -14,21 +16,20 @@ class Readnotification extends StatefulWidget {
 }
 
 class _ReadnotificationState extends State<Readnotification> {
-//  launchURL(String url) async {
-//   if(await canLaunch(url)){
-//     await launch(url,forceWebView:true);
-//   }else{
-//     throw 'Could not launch $url';
-//   }
-//  }
-// final String documentId;
-// ReadNotification({required this.documentId});
+
  var defaultText=TextStyle(color: Colors.black,fontWeight: FontWeight.bold,decoration: TextDecoration.underline,fontSize: 21.0);
   var linkText=TextStyle(color: Colors.blue,
 );
+
   @override
   Widget build(BuildContext context) {
     final args=ModalRoute.of(context)!.settings.arguments as Map<String,dynamic>;
+    final String? imageURL = args['imageURL'];
+    final String? fileUrl = args['fileUrl'];
+    String title = args['title'];
+    // Check if imageURL is not null or empty
+    final bool hasImage = imageURL != null && imageURL.isNotEmpty;
+    final bool hasFile = fileUrl != null && fileUrl.isNotEmpty;
     return Scaffold(
      appBar: AppBar(
       title: Text(args['title']),
@@ -88,32 +89,12 @@ class _ReadnotificationState extends State<Readnotification> {
                   Text(args['para2Desc'],style: TextStyle(fontSize: 18.0,),))
                 ],
               ),
-          //     Text("Link:",style: TextStyle(fontWeight: FontWeight.bold,decoration: TextDecoration.underline,fontSize: 21.0),),
-          //  TextButton(onPressed: (){
-          //   final url="https://www.youtube.com/watch?v=nf4_Ke5B1K8";
-          //   launchURL(url);
-          //  }, child:Text("Click here to visit the official website")),
+        
               SizedBox(
                 height: 15.0,
               ),
             
-              
-              // TextSpan(
-              //   style: linkText,
-              //   text: "Click here to go to the official website",
-              //   recognizer: TapGestureRecognizer()..onTap = () async {
-              //     var url=Uri.parse(args['link']);
-              //     if(await canLaunchUrl(url)){
-              //       await launchUrl(url);
-              //     }
-              //     else{
-              //       throw "Cannot load url";
-              //     }
-              //   }
-              // ),]
-              // ),),
-             
-            Text("Link",
+          Text("Link",
             style: TextStyle(
               fontSize: 15,
 
@@ -135,6 +116,16 @@ class _ReadnotificationState extends State<Readnotification> {
               SizedBox(
                 height: 15.0,
               ),
+                  
+                  if (hasImage)
+                    Container(
+                      child: Image.network(imageURL!),
+                    ),
+                    SizedBox(
+                height: 15.0,
+              ),
+              
+              if (hasFile)
               Container(
                 decoration: BoxDecoration(
                     color: Colors.grey,
@@ -146,14 +137,15 @@ class _ReadnotificationState extends State<Readnotification> {
                       ),
           
                   ),
-
-
-
+                  
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                       IconButton(onPressed: (){}, icon:  Icon(Icons.remove_red_eye_outlined),color: Colors.white,iconSize: 28.0,),
-                       Text("CHMS.pdf",style: TextStyle(fontSize:18.0),),
+                       IconButton(onPressed: (){
+                         Navigator.push(context, MaterialPageRoute
+                         (builder: (context)=>View(url:fileUrl)));
+                       }, icon:  Icon(Icons.remove_red_eye_outlined),color: Colors.white,iconSize: 28.0,),
+                       Text('$title.pdf',style: TextStyle(fontSize:18.0),),
                          IconButton(onPressed: (){}, icon:  Icon(Icons.download),color: Colors.white,iconSize: 28.0,)
                     ],
                   ),
@@ -166,3 +158,23 @@ class _ReadnotificationState extends State<Readnotification> {
     );
   }
 }
+class View extends StatelessWidget {
+  final url;
+  View({this.url});
+  PdfViewerController? _pdfViewerController;
+  @override
+  Widget build(BuildContext context) {
+   
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("PDF Viewer"),
+       
+      ),
+      body: SfPdfViewer.network(
+      url,
+      controller: _pdfViewerController,
+    ),
+    );
+  }
+}
+

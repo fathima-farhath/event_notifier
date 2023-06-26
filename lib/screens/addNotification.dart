@@ -2,11 +2,14 @@ import 'dart:io';
 import 'editnotification.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_dropdown/flutter_dropdown.dart';
 import 'package:image_picker/image_picker.dart';
+
+
 import 'package:firebase_storage/firebase_storage.dart';
 
 class AddNotification extends StatefulWidget {
@@ -39,6 +42,7 @@ class _AddNotificationState extends State<AddNotification> {
     'link':_linkController.text,
     'timestamp': FieldValue.serverTimestamp(),  
     'imageURL':imageUrl,
+    'fileUrl':url,
     };
     
    notification.add(data);
@@ -62,6 +66,21 @@ class _AddNotificationState extends State<AddNotification> {
     },
   );
 }
+
+  String url="";
+  uploadToFirebase() async{
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    File pick=File(result!.files.single.path.toString());
+    var file=pick.readAsBytesSync();
+    String uniqueFilename=DateTime.now().millisecondsSinceEpoch.toString();
+    var pdfFile=FirebaseStorage.instance.ref().child(uniqueFilename).child('Notification_docs');
+    UploadTask task=pdfFile.putData(file);
+    TaskSnapshot snapshot=await task;
+    url=await snapshot.ref.getDownloadURL();
+    // await FirebaseFirestore.instance.collection('notifications').doc().set({
+    //   'fileUrl':url,
+    // });
+  }
   @override
   Widget build(BuildContext context) {
    return Scaffold(
@@ -168,7 +187,7 @@ class _AddNotificationState extends State<AddNotification> {
                   height: 20,
                 ),
                 
- // para 1 Description
+                // para 1 Description
                 Container(
                   width: double.infinity,
                  height: 200,
@@ -258,7 +277,7 @@ class _AddNotificationState extends State<AddNotification> {
                     // _pickedImage = (await ImagePicker()
                     //     .pickImage(source: ImageSource.camera))!;
                 ImagePicker imagePicker=ImagePicker();  
-                  XFile? file= await imagePicker.pickImage(source: ImageSource.camera);
+                  XFile? file= await imagePicker.pickImage(source: ImageSource.gallery);
                 if (file==null) return;
 
                     String uniqueFilename=DateTime.now().millisecondsSinceEpoch.toString();
@@ -305,34 +324,40 @@ class _AddNotificationState extends State<AddNotification> {
                   ),
                 ),
 
-                // ElevatedButton(onPressed: (){
+                // attach file
+                ElevatedButton(
+        onPressed:() => uploadToFirebase(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.file_copy,
+              color: Colors.black,
+            ),
+            SizedBox(
+              height: 30,
+              width: 10,
+            ),
+            Text(
+              "Attach a file(pdf only)",
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(
+            Color.fromARGB(255, 185, 185, 185),
+          ),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+        ),
+      ),
 
-                // }, child: Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     Icon(Icons.file_copy,
-                //     color: Colors.black,
-                //     ),
-                //      SizedBox(
-                //         width: 10,
-                //       ),
-                //     Text("Attach a file",
-                //         style: TextStyle(
-                //           color: Colors.black,
-                //         ),)
-                    
-                //   ],
-
-                // ),
-                // style: ButtonStyle(
-                //   backgroundColor:MaterialStateProperty.all<Color>(Color.fromARGB(255, 185, 185, 185)!),
-                //   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                //       RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(5),
-                //       ),
-                //     ),
-                // ),),
-                
                 
                 //submit button
 

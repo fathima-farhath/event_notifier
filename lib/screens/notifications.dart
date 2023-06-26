@@ -128,6 +128,8 @@ class _MyNotificationsState extends State<MyNotifications> {
                                           'para2Desc':notificationSnap['para2Desc'],
                                           'link':notificationSnap['link'],
                                           'id':notificationSnap.id,
+                                          'imageURL':notificationSnap['imageURL'],
+                                          'fileUrl':notificationSnap['fileUrl']
                                         }
                                       ),
                                     ),
