@@ -43,8 +43,14 @@ dependencies:
   firebase_storage: ^11.2.3
   date_time_picker: ^2.1.0
   flutter_dropdown: ^1.0.1+hotfix.1
+  syncfusion_flutter_calendar: ^20.2.49
+  syncfusion_flutter_pdfviewer: ^19.3.55-beta
+  path_provider: ^2.0.6
+  http: ^0.13.3
 
- 
+dependency_overrides:
+  intl: any
+  syncfusion_flutter_core: any
 
 dev_dependencies:
   flutter_test:
