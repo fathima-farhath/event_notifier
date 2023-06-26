@@ -43,6 +43,7 @@ class _EditNotificationsState extends State<EditNotifications> {
     },
   );
 }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,7 +103,7 @@ class _EditNotificationsState extends State<EditNotifications> {
                   ),
                 ),
                 Container(
-                  width: 200,
+                  width: 150.0,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment:  CrossAxisAlignment.start,

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'editnotification.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,20 @@ class _UpdateNotificationState extends State<UpdateNotification> {
   TextEditingController _para2DescController=TextEditingController();
   TextEditingController _linkController = TextEditingController();
   String imageUrl='';
+   String url="";
+  uploadToFirebase() async{
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    File pick=File(result!.files.single.path.toString());
+    var file=pick.readAsBytesSync();
+    String uniqueFilename=DateTime.now().millisecondsSinceEpoch.toString();
+    var pdfFile=FirebaseStorage.instance.ref().child(uniqueFilename).child('Notification_docs');
+    UploadTask task=pdfFile.putData(file);
+    TaskSnapshot snapshot=await task;
+    url=await snapshot.ref.getDownloadURL();
+    // await FirebaseFirestore.instance.collection('notifications').doc().set({
+    //   'fileUrl':url,
+    // });
+  }
   final CollectionReference notification=FirebaseFirestore.instance.collection('notifications');
 
   void updateNotification(docId){
@@ -38,6 +53,7 @@ class _UpdateNotificationState extends State<UpdateNotification> {
     'link':_linkController.text,
     'timestamp': FieldValue.serverTimestamp(),
     'imageURL': imageUrl, 
+    'fileUrl': url,
     };
     notification.doc(docId).update(data);
   }
@@ -306,32 +322,39 @@ class _UpdateNotificationState extends State<UpdateNotification> {
                   ),
         
         
-                  // ElevatedButton(onPressed: (){
-                  // }, child: Row(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: [
-                  //     Icon(Icons.file_copy,
-                  //     color: Colors.black,
-                  //     ),
-                  //      SizedBox(
-                  //         width: 10,
-                  //       ),
-                  //     Text("Attach a file",
-                  //         style: TextStyle(
-                  //           color: Colors.black,
-                  //         ),)                    
-                  //   ],
-                  // ),
-                  // style: ButtonStyle(
-                  //   backgroundColor:MaterialStateProperty.all<Color>(Color.fromARGB(255, 185, 185, 185)!),
-                  //   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  //       RoundedRectangleBorder(
-                  //         borderRadius: BorderRadius.circular(5),
-                  //       ),
-                  //     ),
-                  // ),),
-                  
-                  
+                    SizedBox(height:20,),
+                         ElevatedButton(
+        onPressed:() => uploadToFirebase(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.file_copy,
+              color: Colors.black,
+            ),
+            SizedBox(
+              height: 30,
+              width: 10,
+            ),
+            Text(
+              "Attach a file(pdf only)",
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(
+            Color.fromARGB(255, 185, 185, 185),
+          ),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+        ),
+      ),
                   //submit button
         
                   SizedBox(
