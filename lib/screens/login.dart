@@ -1,5 +1,9 @@
+import 'package:event_notifier/screens/feed.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'feed.dart';
+//import 'feed.dart';
 
 class LoginUI extends StatefulWidget {
   const LoginUI({super.key});
@@ -9,6 +13,123 @@ class LoginUI extends StatefulWidget {
 }
 
 class _LoginUIState extends State<LoginUI> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  bool _isEmailValid = true;
+  bool _isPasswordValid = true;
+
+  bool validateForm() {
+    bool isValid = true;
+
+    // Validate each form field
+    if (emailController.text.isEmpty) {
+      setState(() => _isEmailValid = false);
+      isValid = false;
+    } else {
+      setState(() => _isEmailValid = true);
+    }
+
+    if (passwordController.text.isEmpty) {
+      setState(() => _isPasswordValid = false);
+      isValid = false;
+    } else {
+      setState(() => _isPasswordValid = true);
+    }
+    return isValid;
+  }
+
+  Future<bool> checkCredentials(String email, String password) async {
+    final querySnapshot =
+        await FirebaseFirestore.instance.collection('Student').get();
+
+    final users = querySnapshot.docs;
+
+    for (var userSnapshot in users) {
+      final userData = userSnapshot.data();
+      final dbEmail = userData['email'];
+      final dbPassword = userData['password'];
+
+      if (email == dbEmail && password == dbPassword) {
+        // Credentials match
+        FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MyFeed()),
+        );
+        return true;
+      }
+    }
+
+    // Credentials do not match
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Invalid Credentials'),
+          content: Text('The email and password do not match.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the alert dialog
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+    return false;
+  }
+
+  // void login() async {
+  //   final email = emailController.text;
+  //   final password = passwordController.text;
+
+  //   bool isValidCredentials = await checkCredentials(email, password);
+
+  //   if (isValidCredentials) {
+  //     //credentials are valid, proceed to login
+  //     FirebaseAuth.instance.signInWithEmailAndPassword(
+  //       email: emailController.text.trim(),
+  //       password: passwordController.text.trim(),
+  //     );
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => MyFeed()),
+  //     );
+  //   } else {
+  //     // Credentials are invalid, show an alert
+  //     showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(
+  //           title: Text('Invalid Credentials'),
+  //           content: Text('The email and password do not match.'),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () {
+  //                 Navigator.pop(context); // Close the alert dialog
+  //               },
+  //               child: Text('OK'),
+  //             ),
+  //           ],
+  //         );
+  //       },
+  //     );
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,12 +154,20 @@ class _LoginUIState extends State<LoginUI> {
               width: MediaQuery.of(context).size.width * .8,
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: TextFormField(
+                controller: emailController,
+                onChanged: (value) {
+                  setState(() {
+                    _isEmailValid = true;
+                  });
+                },
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 15,
                 ),
                 decoration: InputDecoration(
-                    hintText: 'Enter Cusat email or Username',
+                    hintText: 'Enter Cusat email',
+                    errorText:
+                        !_isEmailValid ? 'Please enter a valid email' : null,
                     hintStyle: TextStyle(
                       color: Colors.grey,
                       fontSize: 16,
@@ -52,6 +181,12 @@ class _LoginUIState extends State<LoginUI> {
               width: MediaQuery.of(context).size.width * .8,
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: TextFormField(
+                controller: passwordController,
+                onChanged: (value) {
+                  setState(() {
+                    _isPasswordValid = true;
+                  });
+                },
                 obscureText: true,
                 style: TextStyle(
                   color: Colors.black,
@@ -59,6 +194,9 @@ class _LoginUIState extends State<LoginUI> {
                 ),
                 decoration: InputDecoration(
                     hintText: 'Password',
+                    errorText: !_isPasswordValid
+                        ? 'Please enter a valid password'
+                        : null,
                     hintStyle: TextStyle(
                       color: Colors.grey,
                       fontSize: 16,
@@ -94,7 +232,11 @@ class _LoginUIState extends State<LoginUI> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
+                FirebaseAuth.instance.signInWithEmailAndPassword(
+                  email: emailController.text.trim(),
+                  password: passwordController.text.trim(),
+                );
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => MyFeed()),
                 );

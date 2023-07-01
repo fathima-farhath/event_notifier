@@ -1,14 +1,156 @@
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+//mport 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 
-class registerScreen extends StatefulWidget {
-  const registerScreen({super.key});
+class TeacherSignup extends StatefulWidget {
+  const TeacherSignup({super.key});
 
   @override
-  State<registerScreen> createState() => _registerScreenState();
+  State<TeacherSignup> createState() => _TeacherSignupState();
 }
 
-class _registerScreenState extends State<registerScreen> {
+class _TeacherSignupState extends State<TeacherSignup> {
+  var dept;
+  var gender;
+
+  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phnoController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confpasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    emailController.dispose();
+    phnoController.dispose();
+    passwordController.dispose();
+    confpasswordController.dispose();
+    super.dispose();
+  }
+
+  //form validation
+
+  bool isUsernameValid = true;
+  bool isEmailValid = true;
+  bool isPhoneNumberValid = true;
+  bool isPasswordValid = true;
+  bool isConfirmPasswordValid = true;
+  bool isDeptValid = true;
+  bool isGenderValid = true;
+
+  bool validateForms() {
+    bool isValid = true;
+
+    // Validate each form field
+    if (usernameController.text.isEmpty) {
+      setState(() => isUsernameValid = false);
+      isValid = false;
+    } else {
+      setState(() => isUsernameValid = true);
+    }
+
+    if (!emailController.text.endsWith('@cusat.ac.in')) {
+      setState(() => isEmailValid = false);
+      isValid = false;
+    } else {
+      setState(() => isEmailValid = true);
+    }
+
+    if (phnoController.text.length != 10) {
+      setState(() => isPhoneNumberValid = false);
+      isValid = false;
+    } else {
+      setState(() => isPhoneNumberValid = true);
+    }
+
+    if (dept.isEmpty) {
+      setState(() => isDeptValid = false);
+      isValid = false;
+    } else {
+      setState(() => isDeptValid = true);
+    }
+
+    // if (_sem.isEmpty) {
+    //   setState(() => _isSemValid = false);
+    //   isValid = false;
+    // } else {
+    //   setState(() => _isSemValid = true);
+    // }
+
+    if (gender.isEmpty) {
+      setState(() => isGenderValid = false);
+      isValid = false;
+    } else {
+      setState(() => isGenderValid = true);
+    }
+
+    if (passwordController.text.isEmpty) {
+      setState(() => isPasswordValid = false);
+      isValid = false;
+    } else {
+      setState(() => isPasswordValid = true);
+    }
+
+    if (confpasswordController.text.isEmpty ||
+        confpasswordController.text != passwordController.text) {
+      setState(() => isConfirmPasswordValid = false);
+      isValid = false;
+    } else {
+      setState(() => isConfirmPasswordValid = true);
+    }
+
+    return isValid;
+  }
+
+  Future signUpp() async {
+    //authenticating
+    try {
+      if (passwordConfirmed()) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+        //add user to database
+        addUserDetails(
+            usernameController.text.trim(),
+            emailController.text.trim(),
+            int.parse(phnoController.text.trim()),
+            gender,
+            dept);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginUI()),
+        );
+      }
+    } catch (error) {
+      // Handle any exceptions here
+      print('Error during sign up: $error');
+    }
+  }
+
+//String gender,String dept, String sem,
+  Future addUserDetails(String username, String email, int phno, String gender,
+      String dept) async {
+    await FirebaseFirestore.instance.collection('Teacher').add({
+      'username': username,
+      'email': email,
+      'Phno': phno,
+      'gender': gender,
+      'dept': dept,
+    });
+  }
+
+  bool passwordConfirmed() {
+    if (passwordController.text.trim() == confpasswordController.text.trim()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,17 +171,6 @@ class _registerScreenState extends State<registerScreen> {
                 ),
               ),
             ),
-            // Container(
-            //   height: MediaQuery.of(context).size.height,
-            //   width: MediaQuery.of(context).size.width,
-            //   decoration: BoxDecoration(
-            //     image: DecorationImage(
-            //       image: AssetImage(
-            //         'images/bell.png'
-            //       )
-            //     )
-            //   ),
-            // ),
 
             SizedBox(
               height: 10,
@@ -49,12 +180,21 @@ class _registerScreenState extends State<registerScreen> {
               width: MediaQuery.of(context).size.width * .8,
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: TextFormField(
+                controller: usernameController,
+                onChanged: (value) {
+                  setState(() {
+                    isUsernameValid = true;
+                  });
+                },
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 15,
                 ),
                 decoration: InputDecoration(
                     hintText: 'Username',
+                    errorText: !isUsernameValid
+                        ? 'Please enter a valid username'
+                        : null,
                     hintStyle: TextStyle(
                       color: Colors.grey,
                       fontSize: 16,
@@ -68,12 +208,20 @@ class _registerScreenState extends State<registerScreen> {
               width: MediaQuery.of(context).size.width * .8,
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: TextFormField(
+                controller: emailController,
+                onChanged: (value) {
+                  setState(() {
+                    isEmailValid = true;
+                  });
+                },
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 15,
                 ),
                 decoration: InputDecoration(
                     hintText: 'Cusat email',
+                    errorText:
+                        !isEmailValid ? 'Please enter a valid email' : null,
                     hintStyle: TextStyle(
                       color: Colors.grey,
                       fontSize: 16,
@@ -87,12 +235,21 @@ class _registerScreenState extends State<registerScreen> {
               width: MediaQuery.of(context).size.width * .8,
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: TextFormField(
+                controller: phnoController,
+                onChanged: (value) {
+                  setState(() {
+                    isPhoneNumberValid = true;
+                  });
+                },
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 15,
                 ),
                 decoration: InputDecoration(
                     hintText: 'Phone number',
+                    errorText: !isPhoneNumberValid
+                        ? 'Please enter a valid phone number'
+                        : null,
                     hintStyle: TextStyle(
                       color: Colors.grey,
                       fontSize: 16,
@@ -106,12 +263,14 @@ class _registerScreenState extends State<registerScreen> {
               width: MediaQuery.of(context).size.width * 0.8,
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: DropdownButtonFormField<String>(
+                value: dept,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 15,
                 ),
                 decoration: InputDecoration(
                   hintText: 'Department',
+                  errorText: !isDeptValid ? 'Please select a department' : null,
                   hintStyle: TextStyle(
                     color: Colors.grey,
                     fontSize: 16,
@@ -147,77 +306,30 @@ class _registerScreenState extends State<registerScreen> {
                     child: Text('SF'),
                   ),
                 ],
-                onChanged: (value) {},
+                onChanged: (selectedDept) {
+                  setState(() {
+                    dept = selectedDept;
+                    isDeptValid = true;
+                  });
+                },
               ),
             ),
             SizedBox(
               height: 10,
             ),
+
             Container(
               width: MediaQuery.of(context).size.width * 0.8,
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: DropdownButtonFormField<String>(
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 15,
-                ),
-                decoration: InputDecoration(
-                  hintText: 'Semester',
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 16,
-                  ),
-                ),
-                items: [
-                  DropdownMenuItem<String>(
-                    value: 'Semester 1',
-                    child: Text('Semester 1'),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: 'Semester 2',
-                    child: Text('Semester 2'),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: 'Semester 3',
-                    child: Text('Semester 3'),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: 'Semester 4',
-                    child: Text('Semester 4'),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: 'Semester 5',
-                    child: Text('Semester 5'),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: 'Semester 6',
-                    child: Text('Semester 6'),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: 'Semester 7',
-                    child: Text('Semester 7'),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: 'Semester 8',
-                    child: Text('Semester 8'),
-                  ),
-                ],
-                onChanged: (value) {},
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width * 0.8,
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: DropdownButtonFormField<String>(
+                value: gender,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 15,
                 ),
                 decoration: InputDecoration(
                   hintText: 'Gender',
+                  errorText: !isGenderValid ? 'Please select a gender' : null,
                   hintStyle: TextStyle(
                     color: Colors.grey,
                     fontSize: 16,
@@ -237,8 +349,11 @@ class _registerScreenState extends State<registerScreen> {
                     child: Text('Other'),
                   ),
                 ],
-                onChanged: (value) {
-                  // Handle gender selection here
+                onChanged: (selectedgen) {
+                  setState(() {
+                    gender = selectedgen;
+                    isGenderValid = true;
+                  });
                 },
               ),
             ),
@@ -249,6 +364,12 @@ class _registerScreenState extends State<registerScreen> {
               width: MediaQuery.of(context).size.width * .8,
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: TextFormField(
+                controller: passwordController,
+                onChanged: (value) {
+                  setState(() {
+                    isPasswordValid = true;
+                  });
+                },
                 obscureText: true,
                 style: TextStyle(
                   color: Colors.black,
@@ -256,6 +377,9 @@ class _registerScreenState extends State<registerScreen> {
                 ),
                 decoration: InputDecoration(
                     hintText: 'Create password',
+                    errorText: !isPasswordValid
+                        ? 'Please enter a valid password'
+                        : null,
                     hintStyle: TextStyle(
                       color: Colors.grey,
                       fontSize: 16,
@@ -269,6 +393,12 @@ class _registerScreenState extends State<registerScreen> {
               width: MediaQuery.of(context).size.width * .8,
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: TextFormField(
+                controller: confpasswordController,
+                onChanged: (value) {
+                  setState(() {
+                    isConfirmPasswordValid = true;
+                  });
+                },
                 obscureText: true,
                 style: TextStyle(
                   color: Colors.black,
@@ -276,6 +406,9 @@ class _registerScreenState extends State<registerScreen> {
                 ),
                 decoration: InputDecoration(
                     hintText: 'Confirm password',
+                    errorText: !isConfirmPasswordValid
+                        ? 'Passwords do not match'
+                        : null,
                     hintStyle: TextStyle(
                       color: Colors.grey,
                       fontSize: 16,
@@ -287,10 +420,9 @@ class _registerScreenState extends State<registerScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginUI()),
-                );
+                if (validateForms()) {
+                  signUpp();
+                }
               },
               style: ElevatedButton.styleFrom(
                 primary: Colors.blue, // Set background color to white
@@ -336,8 +468,7 @@ class _registerScreenState extends State<registerScreen> {
                     child: Text(
                       'Already have an account? Log in',
                       style: TextStyle(
-                        color:
-                            Color.fromARGB(255, 12, 134, 199).withOpacity(.9),
+                        color: Color.fromARGB(255, 35, 97, 230).withOpacity(.9),
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
                       ),
@@ -346,7 +477,6 @@ class _registerScreenState extends State<registerScreen> {
                 ],
               ),
             ),
-
             SizedBox(
               height: 10,
             ),

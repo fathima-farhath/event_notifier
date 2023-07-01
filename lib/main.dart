@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 // import 'screens/notifications.dart';
 // import 'screens/readnotify.dart';
-// import 'screens/feed.dart';
+import 'screens/feed.dart';
+import 'screens/typeofuser.dart';
 // import 'screens/editevents.dart';
 //import 'screens/editnotification.dart';
-import 'screens/splash.dart';
+//import 'screens/splash.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -17,7 +22,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Demo App",
-      home: ScreenSplash(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return MyFeed();
+          } else {
+            return ScreenUser();
+          }
+        },
+      ),
       theme: ThemeData(primarySwatch: Colors.indigo),
     );
   }
