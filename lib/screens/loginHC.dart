@@ -1,27 +1,50 @@
 import 'package:event_notifier/screens/feed.dart';
+import 'package:event_notifier/screens/resetpass.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:firebase_core/firebase_core.dart';
+import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
-import 'resetpass.dart';
+import 'otp.dart';
 //import 'feed.dart';
 
-class LoginUI extends StatefulWidget {
-  const LoginUI({super.key});
+class hodLoginUI extends StatefulWidget {
+  const hodLoginUI({super.key});
 
   @override
-  State<LoginUI> createState() => _LoginUIState();
+  State<hodLoginUI> createState() => _hodLoginUIState();
 }
 
-class _LoginUIState extends State<LoginUI> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+class _hodLoginUIState extends State<hodLoginUI> {
+  final emailControllert = TextEditingController();
+  final passwordControllert = TextEditingController();
+  // final otpController = TextEditingController();
+  EmailOTP myauth = EmailOTP();
+  // late EmailAuth emailAuth;
 
   @override
   void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
+    emailControllert.dispose();
+    passwordControllert.dispose();
     super.dispose();
+  }
+
+  void sendOTP() async {
+    myauth.setConfig(
+        appEmail: "fathimafarhana3491@gmail.com",
+        appName: "Email OTP",
+        userEmail: emailControllert.text,
+        otpLength: 4,
+        otpType: OTPType.digitsOnly);
+    if (await myauth.sendOTP() == true) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("OTP has been sent"),
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Oops, OTP send failed"),
+      ));
+    }
   }
 
   bool _isEmailValid = true;
@@ -31,14 +54,14 @@ class _LoginUIState extends State<LoginUI> {
     bool isValid = true;
 
     // Validate each form field
-    if (emailController.text.isEmpty) {
+    if (emailControllert.text.isEmpty) {
       setState(() => _isEmailValid = false);
       isValid = false;
     } else {
       setState(() => _isEmailValid = true);
     }
 
-    if (passwordController.text.isEmpty) {
+    if (passwordControllert.text.isEmpty) {
       setState(() => _isPasswordValid = false);
       isValid = false;
     } else {
@@ -52,15 +75,18 @@ class _LoginUIState extends State<LoginUI> {
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+        email: emailControllert.text.trim(),
+        password: passwordControllert.text.trim(),
       );
 
       // Login successful, navigate to home page
+      sendOTP();
       Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MyFeed()),
-      );
+          context,
+          MaterialPageRoute(
+              builder: (context) => OtpScreen(
+                    myauth: myauth,
+                  )));
     } catch (e) {
       // Login failed, show error dialog
       showDialog(
@@ -107,7 +133,7 @@ class _LoginUIState extends State<LoginUI> {
               width: MediaQuery.of(context).size.width * .8,
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: TextFormField(
-                controller: emailController,
+                controller: emailControllert,
                 onChanged: (value) {
                   setState(() {
                     _isEmailValid = true;
@@ -118,7 +144,7 @@ class _LoginUIState extends State<LoginUI> {
                   fontSize: 15,
                 ),
                 decoration: InputDecoration(
-                    hintText: 'Enter Cusat email',
+                    hintText: 'Enter the Official email id',
                     errorText:
                         !_isEmailValid ? 'Please enter a valid email' : null,
                     hintStyle: TextStyle(
@@ -134,7 +160,7 @@ class _LoginUIState extends State<LoginUI> {
               width: MediaQuery.of(context).size.width * .8,
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: TextFormField(
-                controller: passwordController,
+                controller: passwordControllert,
                 onChanged: (value) {
                   setState(() {
                     _isPasswordValid = true;
@@ -191,8 +217,8 @@ class _LoginUIState extends State<LoginUI> {
             ),
             ElevatedButton(
               onPressed: () {
-                login(emailController.text.trim(),
-                    passwordController.text.trim(), context);
+                login(emailControllert.text.trim(),
+                    passwordControllert.text.trim(), context);
               },
               // onPressed: () {
               //   FirebaseAuth.instance.signInWithEmailAndPassword(

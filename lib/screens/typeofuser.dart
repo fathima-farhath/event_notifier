@@ -1,89 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'signup.dart';
-
-// class SettingItem {
-//   final String title;
-//   final String imagePath;
-//   final VoidCallback onPressed;
-
-//   SettingItem(
-//       {required this.title, required this.imagePath, required this.onPressed});
-// }
-
-// class ScreenUser extends StatelessWidget {
-//   final List<SettingItem> settingItems = [
-//     SettingItem(
-//       title: 'Profile',
-//       imagePath: 'images/student.png',
-//       onPressed: () {},
-//     ),
-//     SettingItem(
-//       title: 'Notifications',
-//       imagePath: 'images/student.png',
-//       onPressed: () {
-//         // Redirect to the notifications page
-//         // Add your navigation logic here
-//       },
-//     ),
-//     SettingItem(
-//       title: 'Privacy',
-//       imagePath: 'images/student.png',
-//       onPressed: () {
-//         // Redirect to the privacy page
-//         // Add your navigation logic here
-//       },
-//     ),
-//     SettingItem(
-//       title: 'Help',
-//       imagePath: 'images/student.png',
-//       onPressed: () {
-//         // Redirect to the help page
-//         // Add your navigation logic here
-//       },
-//     ),
-//   ];
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Padding(
-//         padding: EdgeInsets.only(top: 136.0),
-//         child: GridView.builder(
-//           itemCount: settingItems.length,
-//           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//             crossAxisCount: 2,
-//             childAspectRatio: 1.0,
-//           ),
-//           itemBuilder: (context, index) {
-//             return GestureDetector(
-//               onTap: settingItems[index].onPressed,
-//               child: Card(
-//                 elevation: 2.0,
-//                 child: Column(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   children: [
-//                     Image.asset(
-//                       settingItems[index].imagePath,
-//                       width: 80,
-//                       height: 80,
-//                     ),
-//                     SizedBox(height: 8),
-//                     Text(settingItems[index].title),
-//                     SizedBox(height: 8),
-//                     ElevatedButton(
-//                       onPressed: settingItems[index].onPressed,
-//                       child: Text('Go'),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             );
-//           },
-//         ),
-//       ),
-//     );
-//   }
-// }
 import 'package:flutter/src/widgets/framework.dart';
 //import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/material.dart';
@@ -92,6 +6,13 @@ import 'package:flutter/rendering.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'Studentsignup.dart';
 import 'Teachersignup.dart';
+import 'loginHC.dart';
+
+enum UserType {
+  Student,
+  Teacher,
+  Club,
+}
 
 class ScreenUser extends StatefulWidget {
   const ScreenUser({super.key});
@@ -105,17 +26,26 @@ class _ScreenUserState extends State<ScreenUser> {
     {
       "title": "Student",
       "image": "images/student.png",
-      "loc": () => registerScreen()
+      "loc": () => registerScreen(),
+      "userType": UserType.Student,
     },
     {
       "title": "Faculty",
       "image": "images/teacher.png",
-      "loc": () => TeacherSignup()
+      "loc": () => TeacherSignup(),
+      "userType": UserType.Teacher,
+    },
+    {
+      "title": "HOD",
+      "image": "images/hod.png",
+      "loc": () => hodLoginUI(),
+      "userType": UserType.Club,
     },
     {
       "title": "Club",
       "image": "images/others.jfif",
-      "loc": () => registerScreen()
+      "loc": () => hodLoginUI(),
+      "userType": UserType.Club,
     },
   ];
 

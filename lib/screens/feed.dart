@@ -1,12 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'notifications.dart';
 import 'readevent.dart';
 import 'login.dart';
+import 'editprofile.dart';
 import 'resetpass.dart';
-//import 'typeofuser.dart';
+import 'typeofuser.dart';
 
 class MyFeed extends StatefulWidget {
   const MyFeed({super.key});
@@ -120,8 +121,15 @@ class _MyFeedState extends State<MyFeed> {
               ),
             ),
             ListTile(
-              leading:
-                  IconButton(onPressed: () {}, icon: Icon(Icons.edit_sharp)),
+              leading: IconButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EditProfilePage()),
+                    );
+                  },
+                  icon: Icon(Icons.edit_sharp)),
               title: Text("Edit Profile"),
             ),
             ListTile(
@@ -145,7 +153,7 @@ class _MyFeedState extends State<MyFeed> {
                     FirebaseAuth.instance.signOut();
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginUI()),
+                      MaterialPageRoute(builder: (context) => ScreenUser()),
                     );
                   },
                   icon: Icon(Icons.logout)),

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'typeofuser.dart';
 // import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'feed.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ScreenSplash extends StatefulWidget {
   const ScreenSplash({super.key});
@@ -15,7 +17,7 @@ class ScreenSplash extends StatefulWidget {
 class _ScreenSplashState extends State<ScreenSplash> {
   @override
   void initState() {
-    gotoUser();
+    gotoUser(context);
     super.initState();
   }
 
@@ -79,12 +81,38 @@ class _ScreenSplashState extends State<ScreenSplash> {
     );
   }
 
-  Future<void> gotoUser() async {
+  // Future<void> gotoUser() async {
+  //   await Future.delayed(Duration(milliseconds: 1500));
+  //  StreamBuilder<User?>(
+  //       stream: FirebaseAuth.instance.authStateChanges(),
+  //       builder: (context, snapshot) {
+  //         if (snapshot.hasData) {
+  //           return MyFeed();
+  //         } else {
+  //           return ScreenUser();
+  //         }
+  //       },
+  //     ),
+  // }
+
+  Future<void> gotoUser(BuildContext context) async {
     await Future.delayed(Duration(milliseconds: 1500));
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (ctx) => ScreenUser(),
-      ),
-    );
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    // Check if user is authenticated
+    User? user = auth.currentUser;
+
+    // Navigate to the appropriate page based on authentication status
+    if (user != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MyFeed()),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ScreenUser()),
+      );
+    }
   }
 }

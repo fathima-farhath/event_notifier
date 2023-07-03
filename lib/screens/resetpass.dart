@@ -22,7 +22,8 @@ class _ResetScreenState extends State<ResetScreen> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(hintText: 'Email'),
+              decoration: InputDecoration(
+                  hintText: 'Enter the email from which you registered'),
               onChanged: (value) {
                 setState(() {
                   _email = value.trim();
