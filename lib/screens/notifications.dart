@@ -11,13 +11,11 @@ class MyNotifications extends StatefulWidget {
 }
 
 class _MyNotificationsState extends State<MyNotifications> {
-   
   final CollectionReference notification =
       FirebaseFirestore.instance.collection('notifications');
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         title: Text("Notifications"),
@@ -33,10 +31,10 @@ class _MyNotificationsState extends State<MyNotifications> {
               itemBuilder: (context, index) {
                 final DocumentSnapshot notificationSnap =
                     snapshot.data!.docs.reversed.toList()[index];
-                final timestamp = notificationSnap['timestamp'] as Timestamp;
-                final dateTime = timestamp.toDate();
+                final Timestamp? timestamp = notificationSnap['timestamp'];
+                final DateTime? dateTime = timestamp?.toDate();
                 final formatter = DateFormat('MM/dd/yyyy  hh:mm a');
-                final formattedDateTime = formatter.format(dateTime);
+                final formattedDateTime = dateTime != null ? formatter.format(dateTime) : '';
 
                 return Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -59,12 +57,14 @@ class _MyNotificationsState extends State<MyNotifications> {
                               icon: Icon(Icons.star),
                               color: Colors.white,
                             ),
-                            Text(
-                              notificationSnap['title'],
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                                color: Color.fromARGB(255, 253, 253, 253),
+                            Expanded(
+                              child: Text(
+                                notificationSnap['title'],
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 253, 253, 253),
+                                ),
                               ),
                             )
                           ],
@@ -89,9 +89,9 @@ class _MyNotificationsState extends State<MyNotifications> {
                         ),
                       ),
                       Container(
-                            decoration: BoxDecoration(
-                            color: Colors.indigo[300],
-                            borderRadius: BorderRadius.only(
+                        decoration: BoxDecoration(
+                          color: Colors.indigo[300],
+                          borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(0),
                             topRight: Radius.circular(0),
                             bottomLeft: Radius.circular(12),
@@ -121,16 +121,16 @@ class _MyNotificationsState extends State<MyNotifications> {
                                       builder: (context) => Readnotification(),
                                       settings: RouteSettings(
                                         arguments: {
-                                          'title':notificationSnap['title'],
-                                          'broadTitle':notificationSnap['broadTitle'],
-                                          'shortDescription':notificationSnap['shortDescription'],
-                                          'para1Desc':notificationSnap['para1Desc'],
-                                          'para2Desc':notificationSnap['para2Desc'],
-                                          'link':notificationSnap['link'],
-                                          'id':notificationSnap.id,
-                                          'imageURL':notificationSnap['imageURL'],
-                                          'fileUrl':notificationSnap['fileUrl']
-                                        }
+                                          'title': notificationSnap['title'],
+                                          'broadTitle': notificationSnap['broadTitle'],
+                                          'shortDescription': notificationSnap['shortDescription'],
+                                          'para1Desc': notificationSnap['para1Desc'],
+                                          'para2Desc': notificationSnap['para2Desc'],
+                                          'link': notificationSnap['link'],
+                                          'id': notificationSnap.id,
+                                          'imageURL': notificationSnap['imageURL'],
+                                          'fileUrl': notificationSnap['fileUrl']
+                                        },
                                       ),
                                     ),
                                   );
@@ -142,7 +142,7 @@ class _MyNotificationsState extends State<MyNotifications> {
                         ),
                       ),
                       SizedBox(
-                        height:1.0,
+                        height: 1.0,
                       ),
                       Container(
                         alignment: Alignment.centerRight,

@@ -15,9 +15,12 @@ class _EventReadState extends State<EventRead> {
     
     final args=ModalRoute.of(context)!.settings.arguments as Map<String,dynamic>;
      final String? imageURL = args['imageURL'];
+     final String? link = args['link'];
 
     // Check if imageURL is not null or empty
     final bool hasImage = imageURL != null && imageURL.isNotEmpty;
+    final bool hasUrl = link != null && link.isNotEmpty;
+
     DateTime dateTime = DateTime.now();
     return Scaffold(
       appBar: AppBar(
@@ -171,6 +174,7 @@ body: ListView(
             ],
           ),
           SizedBox(height: 15.0),
+          if(hasUrl)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

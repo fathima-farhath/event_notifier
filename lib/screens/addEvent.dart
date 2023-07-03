@@ -46,34 +46,42 @@ class _CreateEventState extends State<CreateEvent> {
       });
     }
   }
-  
+  bool isTimeValid() {
+  if (selectedFromTime != null && selectedToTime != null) {
+    final DateTime fromDateTime = DateTime(0, 0, 0, selectedFromTime!.hour, selectedFromTime!.minute);
+    final DateTime toDateTime = DateTime(0, 0, 0, selectedToTime!.hour, selectedToTime!.minute);
+    return toDateTime.isAfter(fromDateTime);
+  }
+  return false;
+}
   TextEditingController _titleController = TextEditingController();
   TextEditingController _organizerController = TextEditingController();
   TextEditingController _shortDescriptionController = TextEditingController();
-  TextEditingController _fullDescriptionController = TextEditingController();
+  TextEditingController _fullDescriptionControllerpara1 = TextEditingController();
+  TextEditingController _fullDescriptionControllerpara2 = TextEditingController();
   TextEditingController _linkController = TextEditingController();
   TextEditingController _placeController = TextEditingController();
 String imageUrl='';
 final CollectionReference event=FirebaseFirestore.instance.collection('events');
-  void addEvent(){
-    final data= {
-    'title':_titleController.text,
-    'place':_placeController.text,
-     'time':selectedFromTime!.format(context),
-     'toTime': selectedToTime!.format(context),
-    'date':  DateTime.parse(fromDateString!),
-    'toDate':DateTime.parse(toDateString!),
-    'organizer':_organizerController.text,
-    'shortDescription':_shortDescriptionController.text,
-    'longDescription':_fullDescriptionController.text,
-    'link':_linkController.text,
-    'imageURL':imageUrl,
-    'timestamp':FieldValue.serverTimestamp(),
-    'id':FieldValue.increment(1),
-    };
-    
-   event.add(data);
-  }
+ void addEvent() async {
+  final data = {
+    'title': _titleController.text,
+    'place': _placeController.text,
+    'time': selectedFromTime!.format(context),
+    'toTime': selectedToTime!.format(context),
+    'date': DateTime.parse(fromDateString!),
+    'toDate': DateTime.parse(toDateString!),
+    'organizer': _organizerController.text,
+    'shortDescription': _shortDescriptionController.text,
+    'longDescription1': _fullDescriptionControllerpara1.text,
+    'longDescription2': _fullDescriptionControllerpara2.text,
+    'link': _linkController.text,
+    'imageURL': imageUrl, // Include the imageURL field
+    'timestamp': FieldValue.serverTimestamp(),
+  };
+
+  await event.add(data);
+}
   @override
   Widget build(BuildContext context) {
      String fromTimeText = selectedFromTime != null
@@ -119,15 +127,17 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
+                        return 'Please enter the title';
                       }
                       return null;
                     },
                   ),
                 ),
+
                 const SizedBox(
                   height: 20,
                 ),
+
                 Container(
                   width: double.infinity,
                   height: 50,
@@ -148,7 +158,7 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
+                        return "Please enter the organizer's name";
                       }
                       return null;
                     },
@@ -159,63 +169,64 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                 ),
                 
                 Row(
-  children: [
-    Expanded(
-      flex: 1,
-      child: DateTimePicker(
-        icon: const Icon(Icons.event),
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2100),
-        dateLabelText: 'from',
-        onChanged: (val) {
-          setState(() {
-            fromDateString = val.toString(); // Convert DateTime to String
-          });
-        },
-        validator: (val) {
-          // Validate the value if needed
-          return null;
-        },
-        onSaved: (val) {
-          // Save the value if needed
-        },
-      ),
-    ),
-    const SizedBox(
-      width: 20,
-    ),
-    Expanded(
-      flex: 1,
-      child: DateTimePicker(
-        icon: const Icon(Icons.event),
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2100),
-        dateLabelText: 'to',
-        onChanged: (val) {
-          setState(() {
-            toDateString = val.toString(); // Convert DateTime to String
-          });
-        },
-        validator: (val) {
-          // Validate the value if needed
-          return null;
-        },
-        onSaved: (val) {
-          // Save the value if needed
-        },
-      ),
-    ),
-  ],
-),
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: DateTimePicker(
+                        icon: const Icon(Icons.event),
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                        dateLabelText: 'from',
+                        onChanged: (val) {
+                          setState(() {
+                            fromDateString = val.toString(); // Convert DateTime to String
+                          });
+                        },
+                        validator: (val) {
+                          // Validate the value if needed
+                          return null;
+                        },
+                        onSaved: (val) {
+                          // Save the value if needed
+                        },
+                      ),
+                      
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: DateTimePicker(
+                        icon: const Icon(Icons.event),
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                        dateLabelText: 'to',
+                        onChanged: (val) {
+                          setState(() {
+                            toDateString = val.toString(); // Convert DateTime to String
+                          });
+                        },
+                        validator: (val) {
+                          // Validate the value if needed
+                          return null;
+                        },
+                        onSaved: (val) {
+                          // Save the value if needed
+                        },
+                      ),
+                    ),
+                  ],
+                ),
 
                 const SizedBox(
                   height: 30,
                 ),
 
                 // From and to time
-                 Row(
+        Row(
               children: [
                 Expanded(
                   flex: 1,
@@ -247,6 +258,11 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                 ),
               ],
             ),
+
+            Text(
+              isTimeValid() ? '' : 'To Time must be greater than From Time',
+              style: TextStyle(color: Colors.red),
+            ),
             // Event Location
                const SizedBox(
                   height: 20,
@@ -272,18 +288,19 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
+                        return 'Please enter the location';
                       }
                       return null;
                     },
                   )
                 ),
+
                 SizedBox(height:20,),
 
                 // short Description
                 Container(
                       width: double.infinity,
-                      height: 150,
+                      height: 120,
                        decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(
@@ -295,9 +312,7 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                           // Set maxLines to null for a multi-line text area
                           decoration: InputDecoration(
                             labelText: 'Short Description of the event',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
+                            border: InputBorder.none,
                             fillColor: Color.fromARGB(255, 255, 255, 255),
                             filled: true,
                             contentPadding: const EdgeInsets.all(15),
@@ -327,14 +342,11 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                     )
                   ),
                   child: TextFormField(
-                    controller: _fullDescriptionController,
+                    controller: _fullDescriptionControllerpara1,
                     decoration: InputDecoration(
-                      labelText: 'Long Description of the event',
+                      labelText: 'Long Description of the event(para-1)',
                       // labelStyle: TextStyle(fontSize: 18.0),
-                      border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5)
-                      ),
-                    
+                      border: InputBorder.none,
                       fillColor: Color.fromARGB(255, 255, 255, 255),
                       filled: true,
                       contentPadding: const EdgeInsets.all(15),
@@ -346,6 +358,34 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                       }
                       return null;
                     },
+                  )
+                ),
+          
+                const SizedBox(
+                  height: 20,
+                ),
+
+                Container(
+                  width: double.infinity,
+                  height: 200,
+                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                      color: Colors.black,
+                    )
+                  ),
+                  child: TextFormField(
+                    controller: _fullDescriptionControllerpara2,
+                    decoration: InputDecoration(
+                      labelText: 'Long Description of the event(para-2)',
+                      // labelStyle: TextStyle(fontSize: 18.0),
+                      border: InputBorder.none,
+                      fillColor: Color.fromARGB(255, 255, 255, 255),
+                      filled: true,
+                      contentPadding: const EdgeInsets.all(15),
+                    ),
+                    maxLines:null,
+                    
                   )
                 ),
                 
@@ -373,15 +413,11 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                       filled: true,
                       contentPadding: const EdgeInsets.all(15),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
+                    
                   )
                 ),
                 SizedBox(height:20,),
+
                 //attach image
                 ElevatedButton(
                   onPressed: () async {
@@ -443,14 +479,15 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
+                    if (_formKey.currentState!.validate()) {
                       addEvent();
                       Navigator.push(
                       context,
                         MaterialPageRoute(
-                      builder: (context) => AdminTeacher(),
-                ),
-              );
-                    },
+                      builder: (context) => EditEvent(),
+                        ),
+                      );
+                    };},
                     style: ButtonStyle(
                       minimumSize: MaterialStatePropertyAll(Size(2500,50)),
                           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
