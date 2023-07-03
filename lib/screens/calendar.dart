@@ -4,9 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class ScreenCalendar extends StatelessWidget {
-  const ScreenCalendar({Key? key});
-
-  @override
+const ScreenCalendar({Key? key});
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -92,3 +91,4 @@ class AppointmentDataSource extends CalendarDataSource {
     this.appointments = appointments;
   }
 }
+

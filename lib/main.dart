@@ -1,5 +1,7 @@
 import 'package:event_notifier/screens/feed.dart';
 import 'package:flutter/material.dart';
+import 'screens/splash.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'screens/notifications.dart';
 import 'screens/updateNotification.dart';
 import 'screens/readnotify.dart';
@@ -9,7 +11,7 @@ import 'screens/feed.dart';
 import 'screens/editevents.dart';
 import 'screens/editnotification.dart';
 import 'screens/demo.dart';
- import 'screens/addNotification.dart';
+import 'screens/addNotification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 Future<void> main() async {
@@ -26,9 +28,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Demo App",
-      home:MyFeed(),
+      home: ScreenSplash(),
       theme: ThemeData(primarySwatch: Colors.indigo),
-      );
-
+    );
   }
 }
