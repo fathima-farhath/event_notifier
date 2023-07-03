@@ -1,42 +1,101 @@
+import 'package:badges/badges.dart' as badges;
+import 'package:event_notifier/screens/addNotification.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'notifications.dart';
+import 'addNotification.dart';
 import 'addEvent.dart';
+import 'editnotification.dart';
 import 'readevent.dart';
 import 'calendar.dart';
-import  'package:intl/intl.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:intl/intl.dart';
 
 class MyFeed extends StatefulWidget {
-  const MyFeed({super.key});
+  const MyFeed({Key? key}) : super(key: key);
 
   @override
   State<MyFeed> createState() => _MyFeedState();
 }
 
 class _MyFeedState extends State<MyFeed> {
-  final CollectionReference event = FirebaseFirestore.instance.collection('events');
+    final CollectionReference event =
+      FirebaseFirestore.instance.collection('events');
+  final CollectionReference notifications =
+      FirebaseFirestore.instance.collection('notifications');
+  Icon cusIcon=Icon(Icons.search);
+  Widget cusSearchBar=Text("Eventify");
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final TextEditingController searchController = TextEditingController();
+  List<DocumentSnapshot> events = [];
+List<DocumentSnapshot> allEvents = [];
+  @override
+  void initState() {
+    super.initState();
+    // Get all events from Firestore
+     event.orderBy('timestamp', descending: false).get().then((snapshot) {
+      events = snapshot.docs;
+      allEvents = snapshot.docs;
+      setState(() {});
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
     DateTime datetime = DateTime.now();
-    String datetime4 = DateFormat(DateFormat.YEAR_ABBR_MONTH_WEEKDAY_DAY).format(datetime);
+    String datetime4 = DateFormat(DateFormat.YEAR_ABBR_MONTH_WEEKDAY_DAY)
+        .format(datetime);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Eventify"),
+        title:cusSearchBar,
         elevation: 10,
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CreateEvent(),
-                ),
-              );
+              setState(() {
+                if(this.cusIcon.icon==Icons.search){
+                  this.cusIcon=Icon(Icons.cancel);
+                  this.cusSearchBar=TextField(
+                    controller: searchController,
+                    textInputAction: TextInputAction.go, 
+                    onChanged: (val) {setState(() {
+                      final String value = searchController.text.toLowerCase();
+                       if (value.isEmpty) {
+                        events = allEvents; // Restore the complete list
+                      } else {
+                        events = allEvents
+                            .where((event) =>
+                               event['title'].toLowerCase().contains(value)||
+                               event['organizer'].toLowerCase().contains(value)).toList(); 
+                               //|| event['time'].toLowerCase().contains(value)||
+                              //  event['organizer'].toLowerCase().contains(value)||
+                              //  event['place'].toLowerCase().contains(value)||
+                              //  event['date'].toLowerCase().contains(value)).toList();
+  
+                      }
+                    });},
+                    decoration:InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Search here...",
+                      hintStyle: TextStyle(
+                        color:Colors.white,
+                      )
+                    ),
+                    style:TextStyle(
+                      color: Colors.white,
+                      fontSize:16.0,
+                    )
+                  );
+                }else{
+                  this.cusIcon=Icon(Icons.search);
+                  this.cusSearchBar=Text("Eventify");
+                  events = allEvents;
+                  searchController.clear();
+                }
+              });
             },
-            icon: Icon(Icons.search),
+            icon: cusIcon,
           ),
           IconButton(
             onPressed: () {
@@ -47,14 +106,11 @@ class _MyFeedState extends State<MyFeed> {
                 ),
               );
             },
-            icon: Icon(Icons.notifications_active),
+            icon: badges.Badge(child: Icon(Icons.notifications_active)),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.event_available),
-          ),
-        ],
+          ],
       ),
+     
 drawer: Drawer(
   child: ListView(
     children:[
@@ -230,16 +286,14 @@ drawer: Drawer(
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
+                      reverse:true,
+                      itemCount: events.length,
                       itemBuilder: (context, index) {
-                        final DocumentSnapshot eventSnap =
-                            snapshot.data!.docs.reversed.toList()[index];
+                        final DocumentSnapshot eventSnap = events[index];
                         
-                        final Timestamp? timestamp =
-                            eventSnap['date'] as Timestamp?;
+                        final Timestamp? timestamp =eventSnap['date'] as Timestamp?;
 
                         final String? imageURL = eventSnap['imageURL'];
-
     // Check if imageURL is not null or empty
                         final bool hasImage = imageURL != null && imageURL.isNotEmpty;
 
@@ -281,6 +335,7 @@ drawer: Drawer(
                               );
                             },
                             child: Container(
+                              // key:ValueKey(eventSnap.id),
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 boxShadow: [
@@ -442,7 +497,9 @@ drawer: Drawer(
                       },
                     );
                   } else {
-                    return Container();
+                    return Container(
+                      child: Text("No Events Exists!!"),
+                    );
                   }
                 },
               ),
