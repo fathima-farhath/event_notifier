@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 // import 'screens/notifications.dart';
 // import 'screens/readnotify.dart';
 //import 'screens/otp.dart';
-import 'screens/feed.dart';
-import 'screens/typeofuser.dart';
+//import 'screens/feed.dart';
+//import 'screens/typeofuser.dart';
 // import 'screens/editevents.dart';
 //import 'screens/editnotification.dart';
 import 'screens/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

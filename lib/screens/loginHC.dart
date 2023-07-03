@@ -1,4 +1,4 @@
-import 'package:event_notifier/screens/feed.dart';
+//import 'package:event_notifier/screens/feed.dart';
 import 'package:event_notifier/screens/resetpass.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -29,6 +29,7 @@ class _hodLoginUIState extends State<hodLoginUI> {
     super.dispose();
   }
 
+  //sending otp
   void sendOTP() async {
     myauth.setConfig(
         appEmail: "fathimafarhana3491@gmail.com",
@@ -49,7 +50,7 @@ class _hodLoginUIState extends State<hodLoginUI> {
 
   bool _isEmailValid = true;
   bool _isPasswordValid = true;
-
+  //validating login
   bool validateForm() {
     bool isValid = true;
 
@@ -70,31 +71,78 @@ class _hodLoginUIState extends State<hodLoginUI> {
     return isValid;
   }
 
+  //checking if the email belongd to collection
+  Future<bool> checkEmailBelongsToClub(String email) async {
+    try {
+      final clubSnapshot = await FirebaseFirestore.instance
+          .collection('Club')
+          .where('email', isEqualTo: emailControllert.text.trim())
+          .limit(1)
+          .get();
+
+      final hodSnapshot = await FirebaseFirestore.instance
+          .collection('Department')
+          .where('email', isEqualTo: emailControllert.text.trim())
+          .limit(1)
+          .get();
+
+      return clubSnapshot.size > 0 || hodSnapshot.size > 0;
+    } catch (e) {
+      print('Error checking email: $e');
+      return false;
+    }
+  }
+
+//login fucntion
   Future<void> login(
       String email, String password, BuildContext context) async {
-    try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailControllert.text.trim(),
-        password: passwordControllert.text.trim(),
-      );
+    String email = emailControllert.text.trim();
 
-      // Login successful, navigate to home page
-      sendOTP();
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => OtpScreen(
-                    myauth: myauth,
-                  )));
-    } catch (e) {
-      // Login failed, show error dialog
+    // Login successful, navigate to otp screen
+    bool belongsToClubOrHod = await checkEmailBelongsToClub(email);
+
+    if (belongsToClubOrHod) {
+      try {
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailControllert.text.trim(),
+          password: passwordControllert.text.trim(),
+        );
+
+        sendOTP();
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => OtpScreen(
+                      myauth: myauth,
+                    )));
+      } catch (e) {
+        // Login failed, show error dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Login Failed'),
+              content: Text(e.toString()),
+              actions: [
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } else {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Login Failed'),
-            content: Text(e.toString()),
+            content: Text("This email is not validated as the official email"),
             actions: [
               TextButton(
                 child: Text('OK'),
@@ -106,6 +154,7 @@ class _hodLoginUIState extends State<hodLoginUI> {
           );
         },
       );
+      print("this email is not validated as the official email");
     }
   }
 
@@ -145,6 +194,7 @@ class _hodLoginUIState extends State<hodLoginUI> {
                 ),
                 decoration: InputDecoration(
                     hintText: 'Enter the Official email id',
+                    labelText: 'Email',
                     errorText:
                         !_isEmailValid ? 'Please enter a valid email' : null,
                     hintStyle: TextStyle(

@@ -1,13 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'notifications.dart';
 import 'readevent.dart';
-import 'login.dart';
+//import 'login.dart';
 import 'editprofile.dart';
 import 'resetpass.dart';
 import 'typeofuser.dart';
+
+class Student {
+  final String name;
+  final String phno;
+
+  Student({
+    required this.name,
+    required this.phno,
+  });
+}
 
 class MyFeed extends StatefulWidget {
   const MyFeed({super.key});
@@ -135,7 +145,7 @@ class _MyFeedState extends State<MyFeed> {
             ListTile(
               leading: IconButton(
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => ResetScreen()),
                     );
