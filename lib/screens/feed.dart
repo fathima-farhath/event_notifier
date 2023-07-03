@@ -28,6 +28,7 @@ class _MyFeedState extends State<MyFeed> {
   final TextEditingController searchController = TextEditingController();
   List<DocumentSnapshot> events = [];
 List<DocumentSnapshot> allEvents = [];
+int unreadNotificationsCount = 0;
   @override
   void initState() {
     super.initState();
@@ -37,6 +38,12 @@ List<DocumentSnapshot> allEvents = [];
       allEvents = snapshot.docs;
       setState(() {});
     });
+
+    notifications.snapshots().listen((snapshot) {
+  setState(() {
+      unreadNotificationsCount = snapshot.docs.length;
+    });
+  });
   }
 
 
@@ -105,8 +112,20 @@ List<DocumentSnapshot> allEvents = [];
                   builder: (context) => MyNotifications(),
                 ),
               );
+              setState(() {
+                unreadNotificationsCount = 0; // Mark all notifications as read
+              });
             },
-            icon: badges.Badge(child: Icon(Icons.notifications_active)),
+            icon: Stack(
+              children: [
+                Icon(Icons.notifications_active),
+                if (unreadNotificationsCount > 0)
+                  badges.Badge(
+                    position: badges.BadgePosition.topEnd( top:0, end:0),
+                    badgeContent: Text(''),
+                  ),
+              ],
+            ),
           ),
           ],
       ),
