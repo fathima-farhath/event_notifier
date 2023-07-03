@@ -1,4 +1,8 @@
+import 'addNotification.dart';
+import 'package:flutter/cupertino.dart';
+import 'updateNotification.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EditNotifications extends StatefulWidget {
   const EditNotifications({super.key});
@@ -8,15 +12,57 @@ class EditNotifications extends StatefulWidget {
 }
 
 class _EditNotificationsState extends State<EditNotifications> {
+  final CollectionReference notification=FirebaseFirestore.instance.collection('notifications');
+  void deleteNotification(docId){
+    notification.doc(docId).delete();
+  }
+  void _confirmDelete(String docId) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CupertinoAlertDialog(
+        title: Text('Confirm Delete'),
+        content: Text('Are you sure you want to delete this notification?'),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () {
+              deleteNotification(docId);
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('Delete'),
+            isDestructiveAction: true,
+          ),
+          CupertinoDialogAction(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('Cancel'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit Notifications"),
+        title: Text("Notifications"),
         
       ),
 
-     body: Padding(
+     body: StreamBuilder(
+        stream: notification.orderBy('timestamp', descending: false).snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                final DocumentSnapshot notification= snapshot.data!.docs.reversed.toList()[index];
+
+                return 
+                Padding(
        padding: const EdgeInsets.all(8.0),
        child: Container(
             // color: Colors.amber,
@@ -48,8 +94,8 @@ class _EditNotificationsState extends State<EditNotifications> {
                     child: CircleAvatar(
                       // backgroundColor: Colors.red,
                       radius: 30,
-                      child: Text("C",style: 
-                      TextStyle(
+                      child: Text(notification['title'].substring(0,1),
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                       ),),
@@ -57,33 +103,55 @@ class _EditNotificationsState extends State<EditNotifications> {
                   ),
                 ),
                 Container(
-                  width: 200,
+                  width: 150.0,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment:  CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: Text(
-                           "CH Mohammed Koya Scolarship Renewal 2023 for not ",style: TextStyle(
+                           notification['title'],
+                           style: TextStyle(
                             fontSize: 18,fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      // Text(
-                      //   "Mind Empowered".toString(),style: TextStyle(
-                      //     fontSize: 18,
-                       
-                      // ),)
+                      
                     ],
                      
                   ),
                 ),
                 Row(
                   children: [
-                     IconButton(onPressed: (){}, icon: Icon(Icons.edit,
-                     size: 30,
-                      color: Colors.blue)),
-                    IconButton(onPressed: (){}, icon: Icon(Icons.delete,
+                     IconButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UpdateNotification(),
+        settings: RouteSettings(
+         arguments: {
+          'title':notification['title'],
+          'broadTitle':notification['broadTitle'],
+          'shortDescription':notification['shortDescription'],
+          'para1Desc':notification['para1Desc'],
+          'para2Desc':notification['para2Desc'],
+          'link':notification['link'],
+          'id':notification.id,
+         }
+            ),
+          ),
+        );
+      },
+      icon: Icon(
+        Icons.edit,
+        size: 30,
+        color: Colors.blue,
+      ),
+    ),
+                    IconButton(onPressed: (){
+                      _confirmDelete(notification.id);
+                    }, icon: Icon(Icons.delete,
                     size: 30,
                     color: Colors.red,))
                   ],
@@ -91,6 +159,31 @@ class _EditNotificationsState extends State<EditNotifications> {
               ],
             ),
           ),
-     ),);
+     );
+     },
+            );
+          }
+          return Container();  
+        },
+      ),
+
+      floatingActionButton: Align(
+        alignment: Alignment.bottomCenter,
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddNotification()),
+            );
+          },
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          elevation: 2.0,
+        ),
+      ),
+    
+     );
   }
 }
