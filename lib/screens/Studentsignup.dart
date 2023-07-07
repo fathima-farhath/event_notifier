@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'login.dart';
+import 'loginStud.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //mport 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +89,8 @@ class _registerScreenState extends State<registerScreen> {
       setState(() => _isGenderValid = true);
     }
 
-    if (_passwordController.text.isEmpty) {
+    if (_passwordController.text.isEmpty ||
+        _passwordController.text.length < 6) {
       setState(() => _isPasswordValid = false);
       isValid = false;
     } else {
@@ -134,13 +135,15 @@ class _registerScreenState extends State<registerScreen> {
     }
   }
 
-//String gender,String dept, String sem,
+  //adding to firebase
+
   Future addUserDetails(String username, String email, int phno, String gender,
       String dept, String sem) async {
-    await FirebaseFirestore.instance.collection('Student').add({
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    await FirebaseFirestore.instance.collection('Student').doc(userId).set({
       'username': username,
       'email': email,
-      'Phno': phno,
+      'Phno': phno.toString(),
       'gender': gender,
       'dept': dept,
       'sem': sem,

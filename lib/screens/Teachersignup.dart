@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'login.dart';
+import 'loginTeach.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //mport 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -87,7 +87,7 @@ class _TeacherSignupState extends State<TeacherSignup> {
       setState(() => isGenderValid = true);
     }
 
-    if (passwordController.text.isEmpty) {
+    if (passwordController.text.isEmpty || passwordController.text.length < 6) {
       setState(() => isPasswordValid = false);
       isValid = false;
     } else {
@@ -128,16 +128,34 @@ class _TeacherSignupState extends State<TeacherSignup> {
     } catch (error) {
       // Handle any exceptions here
       print('Error during sign up: $error');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Login Failed'),
+            content: Text(error.toString()),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
 //String gender,String dept, String sem,
   Future addUserDetails(String username, String email, int phno, String gender,
       String dept) async {
-    await FirebaseFirestore.instance.collection('Teacher').add({
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    await FirebaseFirestore.instance.collection('Teacher').doc(userId).set({
       'username': username,
       'email': email,
-      'Phno': phno,
+      'Phno': phno.toString(),
       'gender': gender,
       'dept': dept,
     });

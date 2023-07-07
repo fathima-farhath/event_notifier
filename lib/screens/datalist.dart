@@ -1,138 +1,98 @@
-// import 'Studentsignup.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'feedHOD.dart';
 
-// var data = [
-//   {
-//     "title": "Student",
-//     "image": "images/student.png",
-//     "loc": () => registerScreen()
-//   },
-//   {
-//     "title": "Faculty",
-//     "image": "images/teacher.png",
-//     "loc": () => registerScreen()
-//   },
-//   {
-//     "title": "Club",
-//     "image": "images/others.jfif",
-//     "loc": () => registerScreen()
-//   },
-// ];
-//  children: [
-//             UserAccountsDrawerHeader(
-//               accountName: Text(
-//                 "Aavani P K",
-//                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//               ),
-//               accountEmail: Text(user.email!, style: TextStyle(fontSize: 17)),
-//               decoration: BoxDecoration(
-//                 color: Color.fromARGB(255, 7, 25, 127),
-//               ),
-//               currentAccountPicture: CircleAvatar(
-//                 child: Text(
-//                   "A",
-//                   style: TextStyle(
-//                     color: Color.fromARGB(255, 7, 25, 127),
-//                     fontSize: 30.0,
-//                     fontWeight: FontWeight.bold,
-//                   ),
-//                 ),
-//                 backgroundColor: Colors.white,
-//                 radius: 100,
-//               ),
-//             ),
-//             Container(
-//               margin: EdgeInsets.all(8),
-//               decoration: BoxDecoration(
-//                   color: Color.fromARGB(255, 49, 120, 242),
-//                   borderRadius: BorderRadius.only(
-//                       topLeft: Radius.circular(10),
-//                       bottomLeft: Radius.circular(10),
-//                       bottomRight: Radius.circular(10),
-//                       topRight: Radius.circular(40))),
-//               child: Padding(
-//                 padding: const EdgeInsets.all(14.0),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Text(
-//                       "Semester: IV",
-//                       style: TextStyle(
-//                         fontSize: 18.0,
-//                         color: Color.fromARGB(255, 255, 255, 255),
-//                       ),
-//                     ),
-//                     SizedBox(
-//                       height: 3,
-//                     ),
-//                     Text(
-//                       "Department: Information Technology",
-//                       style: TextStyle(
-//                         fontSize: 18.0,
-//                         color: Color.fromARGB(255, 255, 255, 255),
-//                       ),
-//                     ),
-//                     SizedBox(
-//                       height: 3,
-//                     ),
-//                     Text(
-//                       "Gender: Female",
-//                       style: TextStyle(
-//                         fontSize: 18.0,
-//                         color: Color.fromARGB(255, 255, 255, 255),
-//                       ),
-//                     ),
-//                     SizedBox(
-//                       height: 3,
-//                     ),
-//                     Text(
-//                       "Phone no: 9496035580",
-//                       style: TextStyle(
-//                         fontSize: 18.0,
-//                         color: Color.fromARGB(255, 255, 255, 255),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
+class UserProfile extends StatefulWidget {
+  @override
+  _UserProfileState createState() => _UserProfileState();
+}
 
-//             ListTile(
-//               leading: IconButton(
-//                   onPressed: () {
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(
-//                           builder: (context) => EditProfilePage()),
-//                     );
-//                   },
-//                   icon: Icon(Icons.edit_sharp)),
-//               title: Text("Edit Profile"),
-//             ),
-//             ListTile(
-//               leading: IconButton(
-//                   onPressed: () {
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(builder: (context) => ResetScreen()),
-//                     );
-//                   },
-//                   icon: Icon(Icons.password_outlined)),
-//               title: Text("Reset Password"),
-//             ),
-//             // ListTile(
-//             //   leading:IconButton(onPressed: (){}, icon: Icon(Icons.dashboard)),
-//             //   title: Text("Go to dashboard"),
-//             // ),
-//             ListTile(
-//               leading: IconButton(
-//                   onPressed: () {
-//                     FirebaseAuth.instance.signOut();
-//                     Navigator.pushReplacement(
-//                       context,
-//                       MaterialPageRoute(builder: (context) => LoginUI()),
-//                     );
-//                   },
-//                   icon: Icon(Icons.logout)),
-//               title: Text("SignOut"),
-//             )
-//           ],
+class _UserProfileState extends State<UserProfile> {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+
+  String _username = '';
+  String _email = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserData();
+  }
+
+  // void _getUserData() async {
+  //   try {
+  //     final userId = _firebaseAuth.currentUser!.uid;
+  //     final userDoc =
+  //         await _firebaseFirestore.collection('Student').doc(userId).get();
+  //     print("uid ");
+  //     print(userId);
+
+  //     // if (userDoc.exists) {
+  //     //   setState(() {
+  //     // _username = userDoc.get('sem') ?? '';
+  //     var userData = userDoc.data();
+  //     var username = userData!['username'];
+  //     print(username);
+  //     //     _email = userDoc.get('email') ?? '';
+  //     //   });
+  //     // }
+  //   } catch (e) {
+  //     print("error in fetching: $e");
+  //   }
+  // }
+
+  void _getUserData() async {
+    try {
+      final user = _firebaseAuth.currentUser;
+      if (user != null) {
+        final userId = user.uid;
+        final userDoc =
+            await _firebaseFirestore.collection('Student').doc(userId).get();
+        if (userDoc.exists) {
+          setState(() {
+            _username = userDoc.get('username');
+            _email = userDoc.get('email');
+          });
+        } else {
+          print("Document does not exist");
+        }
+      } else {
+        print("User is not authenticated");
+      }
+    } catch (e) {
+      print("Error in fetching: $e");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('User Profile'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyFeed(),
+              ),
+            );
+          },
+        ),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            Text("data"),
+            SizedBox(height: 10),
+            Text(_username, style: TextStyle(fontSize: 20)),
+            Text(_email, style: TextStyle(fontSize: 16)),
+          ],
+        ),
+      ),
+    );
+  }
+}

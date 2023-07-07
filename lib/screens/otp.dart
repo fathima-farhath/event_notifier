@@ -53,8 +53,7 @@
 // }
 
 import 'package:email_otp/email_otp.dart';
-//import 'package:emailotp/home.dart';
-import 'package:event_notifier/screens/feed.dart';
+import 'feedHOD.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

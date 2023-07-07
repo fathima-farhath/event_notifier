@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'feedHOD.dart';
+import 'feedStud.dart';
+import 'feedTeach.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -13,6 +18,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Profile'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            goTofeed(context);
+          },
+        ),
       ),
       body: Container(
         padding: EdgeInsets.only(left: 16, top: 25, right: 16),
@@ -31,23 +42,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     Container(
                       width: 130,
                       height: 130,
+                      child: CircleAvatar(
+                        child: Text(
+                          "A",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 40.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        backgroundColor: Color.fromARGB(255, 7, 25, 127),
+                        radius: 100,
+                      ),
                       decoration: BoxDecoration(
-                          border: Border.all(
-                              width: 4,
-                              color: Theme.of(context).scaffoldBackgroundColor),
-                          boxShadow: [
-                            BoxShadow(
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                color: Colors.black.withOpacity(0.1),
-                                offset: Offset(0, 10))
-                          ],
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(
-                                "https://images.pexels.com/photos/3307758/pexels-photo-3307758.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=250",
-                              ))),
+                        border: Border.all(
+                            width: 4,
+                            color: Theme.of(context).scaffoldBackgroundColor),
+                        boxShadow: [
+                          BoxShadow(
+                              spreadRadius: 2,
+                              blurRadius: 10,
+                              color: Colors.black.withOpacity(0.1),
+                              offset: Offset(0, 10))
+                        ],
+                        shape: BoxShape.circle,
+                      ),
                     ),
                     Positioned(
                         bottom: 0,
@@ -153,5 +172,59 @@ class _EditProfilePageState extends State<EditProfilePage> {
             )),
       ),
     );
+  }
+
+  void goTofeed(BuildContext context) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    // Check if user is authenticated
+    User? user = auth.currentUser;
+    try {
+      if (user != null) {
+        String userId = user.uid;
+
+        final studentDoc = await FirebaseFirestore.instance
+            .collection('Student')
+            .doc(userId)
+            .get();
+        if (studentDoc.exists) {
+          print("Student");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeeds()),
+          );
+        }
+
+        final teachDoc = await FirebaseFirestore.instance
+            .collection('Teacher')
+            .doc(userId)
+            .get();
+        if (teachDoc.exists) {
+          print("Teacher");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeedt()),
+          );
+        }
+
+        final clubDoc = await FirebaseFirestore.instance
+            .collection('Club')
+            .doc(userId)
+            .get();
+        final hodDoc = await FirebaseFirestore.instance
+            .collection('Department')
+            .doc(userId)
+            .get();
+        if (clubDoc.exists || hodDoc.exists) {
+          print("Club");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeed()),
+          );
+        }
+      }
+    } catch (e) {
+      print("error in moving: $e");
+    }
   }
 }

@@ -1,11 +1,14 @@
+import 'package:event_notifier/screens/feedStud.dart';
+import 'package:event_notifier/screens/feedTeach.dart';
 import 'package:flutter/src/widgets/framework.dart';
 //import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/material.dart';
 import 'typeofuser.dart';
 // import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'feed.dart';
+import 'feedHOD.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ScreenSplash extends StatefulWidget {
   const ScreenSplash({super.key});
@@ -101,18 +104,58 @@ class _ScreenSplashState extends State<ScreenSplash> {
 
     // Check if user is authenticated
     User? user = auth.currentUser;
+    try {
+      if (user != null) {
+        String userId = user.uid;
 
-    // Navigate to the appropriate page based on authentication status
-    if (user != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => MyFeed()),
-      );
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ScreenUser()),
-      );
+        final studentDoc = await FirebaseFirestore.instance
+            .collection('Student')
+            .doc(userId)
+            .get();
+        if (studentDoc.exists) {
+          print("Student");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeeds()),
+          );
+        }
+
+        final teachDoc = await FirebaseFirestore.instance
+            .collection('Teacher')
+            .doc(userId)
+            .get();
+        if (teachDoc.exists) {
+          print("Teacher");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeedt()),
+          );
+        }
+
+        final clubDoc = await FirebaseFirestore.instance
+            .collection('Club')
+            .doc(userId)
+            .get();
+        final hodDoc = await FirebaseFirestore.instance
+            .collection('Department')
+            .doc(userId)
+            .get();
+        if (clubDoc.exists || hodDoc.exists) {
+          print("Club");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeed()),
+          );
+        }
+      } else {
+        // Navigate to the appropriate page based on authentication status and collection
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ScreenUser()),
+        );
+      }
+    } catch (e) {
+      print("error in moving: $e");
     }
   }
 }
