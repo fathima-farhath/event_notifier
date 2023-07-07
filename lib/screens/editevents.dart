@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'addEvent.dart';
 import 'updateEvent.dart';
+import 'feed.dart';
 
 class EditEvent extends StatefulWidget {
   const EditEvent({super.key});
@@ -49,7 +50,11 @@ void _confirmDelete(String docId) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Add Events"),
-        
+        actions: [
+            IconButton(onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>MyFeed()));
+            }, icon: Icon(Icons.home)),
+            ],
       ),
 
      body: StreamBuilder(
@@ -110,7 +115,7 @@ void _confirmDelete(String docId) {
                          
                         children: [
                           Container(
-                            width: 200,
+                            width: 150.0,
                             child: Row(
                                children: [
                                 Expanded(
@@ -159,7 +164,7 @@ void _confirmDelete(String docId) {
                           'longDescription2':eventSnap['longDescription2'] ,
                           'link': eventSnap['link'],
                           'id':eventSnap.id,
-                          'imageURL':eventSnap['imageURL'], // Include the imageURL field
+                          'imageURL': eventSnap['imageURL'] != null ? eventSnap['imageURL'] : null, // Include the imageURL field
                           'timestamp': FieldValue.serverTimestamp(),
                         }
                       )

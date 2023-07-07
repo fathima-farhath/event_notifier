@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'updateNotification.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'feed.dart';
 class EditNotifications extends StatefulWidget {
   const EditNotifications({super.key});
 
@@ -49,7 +49,11 @@ class _EditNotificationsState extends State<EditNotifications> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Notifications"),
-        
+        actions: [
+            IconButton(onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>MyFeed()));
+            }, icon: Icon(Icons.home)),
+            ],
       ),
 
      body: StreamBuilder(
@@ -138,6 +142,8 @@ class _EditNotificationsState extends State<EditNotifications> {
           'para2Desc':notification['para2Desc'],
           'link':notification['link'],
           'id':notification.id,
+          'fileUrl':notification['fileUrl'],
+          'imageURL':notification['imageURL']
          }
             ),
           ),

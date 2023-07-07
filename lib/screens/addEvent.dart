@@ -82,6 +82,30 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
 
   await event.add(data);
 }
+double uploadProgress = 0.0;
+Future<void> uploadImageToFirebaseStorage(XFile file) async {
+    String uniqueFilename = DateTime.now().millisecondsSinceEpoch.toString();
+
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImage = referenceRoot.child('images');
+    Reference referenceImageToUpload = referenceDirImage.child(uniqueFilename);
+
+    try {
+      UploadTask uploadTask = referenceImageToUpload.putFile(File(file.path));
+      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+        double progress = snapshot.bytesTransferred / snapshot.totalBytes;
+        setState(() {
+          uploadProgress = progress;
+        });
+      });
+      TaskSnapshot taskSnapshot = await uploadTask;
+      imageUrl = await referenceImageToUpload.getDownloadURL();
+    } catch (error) {
+      print(error);
+    }
+  }
+String url="";
+XFile? selectedImage;
   @override
   Widget build(BuildContext context) {
      String fromTimeText = selectedFromTime != null
@@ -395,7 +419,58 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                   height: 20,
                 ),
 
-               Container(
+               
+
+                //attach image
+                ElevatedButton(
+                  onPressed: () async {
+                    ImagePicker imagePicker = ImagePicker();
+                    XFile? file = await imagePicker.pickImage(source: ImageSource.gallery);
+                    if (file == null) return;
+                    setState(() {
+                      selectedImage = file; // Store the selected image file
+                      uploadProgress = 0.0; // Reset upload progress
+                    });
+
+                    await uploadImageToFirebaseStorage(file);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Color.fromARGB(255, 185, 185, 185)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.attach_file,
+                        color: Colors.black,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Attach an Image',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+                if (selectedImage != null && uploadProgress > 0 && uploadProgress < 1)
+                  LinearProgressIndicator(
+                    value: uploadProgress,
+                  ),
+                  Text(
+                selectedImage != null ? selectedImage!.name : '',  
+                style: TextStyle(fontSize: 12.0),
+                ),
+                SizedBox(
+                        height: 10.0,
+                      ),
+             Container(
                   width: double.infinity,
                   height: 50,
                   decoration: BoxDecoration(
@@ -417,60 +492,6 @@ final CollectionReference event=FirebaseFirestore.instance.collection('events');
                   )
                 ),
                 SizedBox(height:20,),
-
-                //attach image
-                ElevatedButton(
-                  onPressed: () async {
-                    // _pickedImage = (await ImagePicker()
-                    //     .pickImage(source: ImageSource.camera))!;
-                ImagePicker imagePicker=ImagePicker();  
-                  XFile? file= await imagePicker.pickImage(source: ImageSource.camera);
-                if (file==null) return;
-
-                    String uniqueFilename=DateTime.now().millisecondsSinceEpoch.toString();
-
-
-
-                    Reference referenceRoot=FirebaseStorage.instance.ref();
-                    Reference ReferenceDirImage=referenceRoot.child('images');
-                    Reference ReferenceImageToUpload=ReferenceDirImage.child(uniqueFilename);
-                  
-                    try{
-                    await ReferenceImageToUpload.putFile(File(file!.path));
-                    imageUrl=await ReferenceImageToUpload.getDownloadURL();
-                    }
-                    catch(error){
-                      
-                    }
-                  },
-                  style: ButtonStyle(
-                
-                     backgroundColor:
-                        MaterialStateProperty.all<Color>(Color.fromARGB(255, 185, 185, 185)!),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        Icons.attach_file,
-                        color: Colors.black,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Attach an Image',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ],
-                  ),
-                ),
-
               
                 //submit button
                 const SizedBox(

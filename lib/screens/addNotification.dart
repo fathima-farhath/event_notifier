@@ -7,9 +7,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_dropdown/flutter_dropdown.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-
-
+import 'package:multiselect/multiselect.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class AddNotification extends StatefulWidget {
@@ -20,16 +20,16 @@ class AddNotification extends StatefulWidget {
 }
 
 class _AddNotificationState extends State<AddNotification> {
+
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _titleController = TextEditingController();
   TextEditingController _broadTitleController=TextEditingController();
   TextEditingController _shortDescriptionController = TextEditingController();
-  // TextEditingController _fullDescriptionController = TextEditingController();
   TextEditingController _para1DescController=TextEditingController();
   TextEditingController _para2DescController=TextEditingController();
   TextEditingController _linkController = TextEditingController();
-  String imageUrl='';
+  
   final CollectionReference notification=FirebaseFirestore.instance.collection('notifications');
 
   void addNotification(){
@@ -43,6 +43,7 @@ class _AddNotificationState extends State<AddNotification> {
     'timestamp': FieldValue.serverTimestamp(),  
     'imageURL':imageUrl,
     'fileUrl':url,
+    'department':selectedDepartments,
     };
     
    notification.add(data);
@@ -67,7 +68,7 @@ class _AddNotificationState extends State<AddNotification> {
   );
 }
 
-  String url="";
+ 
   uploadToFirebase() async{
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     File pick=File(result!.files.single.path.toString());
@@ -77,15 +78,26 @@ class _AddNotificationState extends State<AddNotification> {
     UploadTask task=pdfFile.putData(file);
     TaskSnapshot snapshot=await task;
     url=await snapshot.ref.getDownloadURL();
+    setState(() {
+      selectedPdfFileName = pick.path.split('/').last;
+    });
     // await FirebaseFirestore.instance.collection('notifications').doc().set({
     //   'fileUrl':url,
     // });
   }
+  String imageUrl='';
+  String url="";
+  String selectedPdfFileName = '';
+  XFile? selectedImage;
+  List<String> allDepartments = ['IT','CS','EEE','SF','MECH','EC','CIVIL'];
+  List<String> selectedDepartments = [];
+  bool isSelectionRequired = true;
   @override
   Widget build(BuildContext context) {
    return Scaffold(
       appBar: AppBar(
         title: const Center(child: Text('Add Notifications')),
+        
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -247,29 +259,7 @@ class _AddNotificationState extends State<AddNotification> {
                 ),
               
               // Link
-               Container(
-                  width: double.infinity,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: TextFormField(
-                    controller: _linkController,
-                    decoration: InputDecoration(
-                      labelText: 'Link',
-                      // labelStyle: TextStyle(fontSize: 18.0),
-                      border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5)
-                      ),
-                      fillColor: Color.fromARGB(255, 255, 255, 255),
-                      filled: true,
-                      contentPadding: const EdgeInsets.all(15),
-                    ),
-                    
-                  )
-                ),
-
-                SizedBox(height:20,),
+              
 
                 //attach image
                 ElevatedButton(
@@ -279,7 +269,9 @@ class _AddNotificationState extends State<AddNotification> {
                 ImagePicker imagePicker=ImagePicker();  
                   XFile? file= await imagePicker.pickImage(source: ImageSource.gallery);
                 if (file==null) return;
-
+                     setState(() {
+                      selectedImage = file; // Store the selected image file
+                    });
                     String uniqueFilename=DateTime.now().millisecondsSinceEpoch.toString();
 
 
@@ -323,7 +315,10 @@ class _AddNotificationState extends State<AddNotification> {
                     ],
                   ),
                 ),
-
+                  Text(
+                selectedImage != null ? selectedImage!.name : '',  
+                style: TextStyle(fontSize: 12.0),
+                ),
                 // attach file
                 ElevatedButton(
         onPressed:() => uploadToFirebase(),
@@ -357,13 +352,59 @@ class _AddNotificationState extends State<AddNotification> {
           ),
         ),
       ),
+Text(
+  selectedPdfFileName,
+  style: TextStyle(fontSize: 12.0),
+),
+SizedBox(height: 10),
+               Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextFormField(
+                    controller: _linkController,
+                    decoration: InputDecoration(
+                      labelText: 'Link',
+                      // labelStyle: TextStyle(fontSize: 18.0),
+                      border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5)
+                      ),
+                      fillColor: Color.fromARGB(255, 255, 255, 255),
+                      filled: true,
+                      contentPadding: const EdgeInsets.all(15),
+                    ),
+                    
+                  )
+                ),
 
-                
+                SizedBox(height:20,),  
                 //submit button
 
-                SizedBox(
-                  height: 20,
-                ),
+             DropDownMultiSelect(
+              options:  allDepartments,
+              selectedValues: selectedDepartments,
+              onChanged: (value) {
+                print('selected fruit $value');
+                setState(() {
+                  selectedDepartments = value;
+                });
+                print('you have selected $selectedDepartments departments.');
+              },
+              whenEmpty: 'Select the deparments to alert',
+                
+            ),
+           
+
+
+    
+
+            SizedBox(
+              height: 10,
+            ),
+           
+               
                 Center(
                   child: ElevatedButton(
                     onPressed: () {

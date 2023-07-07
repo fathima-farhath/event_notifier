@@ -125,13 +125,13 @@ void showDialogBox(BuildContext context){
     // fromTimeText=args['time'];
     // toTimeText=args['toTime'];
 
-    //  imageUrl=args['imageURL'];
+    imageUrl=args['imageURL'];
     // toDateString=args['toDate'];
     
-  if (args['toDate'] != null) {
-    final DateTime toDate = args['toDate'].toDate();
-    toDateString = toDate.toString();
-  }
+  // if (args['toDate'] != null) {
+  //   final DateTime toDate = args['toDate'].toDate();
+  //   toDateString = toDate.toString();
+  // }
   
    
     return Scaffold(
@@ -148,68 +148,15 @@ void showDialogBox(BuildContext context){
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: double.infinity,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: TextFormField(
-                    controller: _titleController,
-                    decoration: InputDecoration(
-                      labelText: 'Name of the event',
-                      labelStyle: TextStyle(fontSize: 18.0),
-                      border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5)
-                      ),
-                      fillColor: Color.fromARGB(255, 255, 255, 255),
-                      filled: true,
-                      contentPadding: const EdgeInsets.all(15),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the title';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 20,
-                ),
-
-                Container(
-                  width: double.infinity,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: TextFormField(
-                    controller: _organizerController,
-                    decoration: InputDecoration(
-                      labelText: 'Name of the Club',
-                      // labelStyle: TextStyle(fontSize: 18.0),
-                      border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5)
-                      ),
-                      fillColor: Color.fromARGB(255, 255, 255, 255),
-                      filled: true,
-                      contentPadding: const EdgeInsets.all(15),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please enter the organizer's name";
-                      }
-                      return null;
-                    },
-                  )
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                
-                Row(
+                Row(children: [
+                   Expanded(
+                     child: Text(
+                                 "**Make sure you enter the date and time fields first",
+                                 style: TextStyle(color: Colors.black87),
+                               ),
+                   ),
+                ],),
+                 Row(
                   children: [
                     Expanded(
                       flex: 1,
@@ -305,11 +252,132 @@ void showDialogBox(BuildContext context){
               isTimeValid() ? '' : 'To Time must be greater than From Time',
               style: TextStyle(color: Colors.red),
             ),
+            const SizedBox(
+                  height: 25,
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextFormField(
+                    controller: _titleController,
+                    decoration: InputDecoration(
+                      labelText: 'Name of the event',
+                      labelStyle: TextStyle(fontSize: 18.0),
+                      border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5)
+                      ),
+                      fillColor: Color.fromARGB(255, 255, 255, 255),
+                      filled: true,
+                      contentPadding: const EdgeInsets.all(15),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the title';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+
+                const SizedBox(
+                  height: 20,
+                ),
+
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextFormField(
+                    controller: _organizerController,
+                    decoration: InputDecoration(
+                      labelText: 'Name of the Club',
+                      // labelStyle: TextStyle(fontSize: 18.0),
+                      border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5)
+                      ),
+                      fillColor: Color.fromARGB(255, 255, 255, 255),
+                      filled: true,
+                      contentPadding: const EdgeInsets.all(15),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter the organizer's name";
+                      }
+                      return null;
+                    },
+                  )
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                
+               
             // Event Location
                const SizedBox(
                   height: 20,
                 ),
+                 ElevatedButton(
+                  onPressed: () async {
+                    // _pickedImage = (await ImagePicker()
+                    //     .pickImage(source: ImageSource.camera))!;
+                ImagePicker imagePicker=ImagePicker();  
+                  XFile? file= await imagePicker.pickImage(source: ImageSource.camera);
+                if (file==null) return;
+
+                    String uniqueFilename=DateTime.now().millisecondsSinceEpoch.toString();
+
+
+
+                    Reference referenceRoot=FirebaseStorage.instance.ref();
+                    Reference ReferenceDirImage=referenceRoot.child('images');
+                    Reference ReferenceImageToUpload=ReferenceDirImage.child(uniqueFilename);
+                  
+                    try{
+                    await ReferenceImageToUpload.putFile(File(file!.path));
+                    imageUrl=await ReferenceImageToUpload.getDownloadURL();
+                    }
+                    catch(error){
+                      
+                    }
+                  },
+                  style: ButtonStyle(
                 
+                     backgroundColor:
+                        MaterialStateProperty.all<Color>(Color.fromARGB(255, 185, 185, 185)!),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(
+                        Icons.attach_file,
+                        color: Colors.black,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Attach an Image',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+
+              
+                //submit button
+                const SizedBox(
+                  height: 20,
+                ),
                 Container(
                   width: double.infinity,
                   height: 50,
@@ -462,63 +530,7 @@ void showDialogBox(BuildContext context){
                 SizedBox(height:20,),
 
                 //attach image
-                ElevatedButton(
-                  onPressed: () async {
-                    // _pickedImage = (await ImagePicker()
-                    //     .pickImage(source: ImageSource.camera))!;
-                ImagePicker imagePicker=ImagePicker();  
-                  XFile? file= await imagePicker.pickImage(source: ImageSource.camera);
-                if (file==null) return;
-
-                    String uniqueFilename=DateTime.now().millisecondsSinceEpoch.toString();
-
-
-
-                    Reference referenceRoot=FirebaseStorage.instance.ref();
-                    Reference ReferenceDirImage=referenceRoot.child('images');
-                    Reference ReferenceImageToUpload=ReferenceDirImage.child(uniqueFilename);
-                  
-                    try{
-                    await ReferenceImageToUpload.putFile(File(file!.path));
-                    imageUrl=await ReferenceImageToUpload.getDownloadURL();
-                    }
-                    catch(error){
-                      
-                    }
-                  },
-                  style: ButtonStyle(
-                
-                     backgroundColor:
-                        MaterialStateProperty.all<Color>(Color.fromARGB(255, 185, 185, 185)!),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        Icons.attach_file,
-                        color: Colors.black,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Attach an Image',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ],
-                  ),
-                ),
-
-              
-                //submit button
-                const SizedBox(
-                  height: 20,
-                ),
+               
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
