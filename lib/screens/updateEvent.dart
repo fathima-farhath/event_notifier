@@ -8,6 +8,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_dropdown/flutter_dropdown.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UpdateEvent extends StatefulWidget {
   const UpdateEvent({Key? key}) : super(key: key);
@@ -22,7 +23,7 @@ class _UpdateEventState extends State<UpdateEvent> {
   String? fromDateString;
   String? toDateString;
   final _formKey = GlobalKey<FormState>();
-  
+
   // XFile? _pickedImage;
   Future<void> _selectFromTime(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
@@ -47,64 +48,77 @@ class _UpdateEventState extends State<UpdateEvent> {
       });
     }
   }
+
   bool isTimeValid() {
-  if (selectedFromTime != null && selectedToTime != null) {
-    final DateTime fromDateTime = DateTime(0, 0, 0, selectedFromTime!.hour, selectedFromTime!.minute);
-    final DateTime toDateTime = DateTime(0, 0, 0, selectedToTime!.hour, selectedToTime!.minute);
-    return toDateTime.isAfter(fromDateTime);
+    if (selectedFromTime != null && selectedToTime != null) {
+      final DateTime fromDateTime =
+          DateTime(0, 0, 0, selectedFromTime!.hour, selectedFromTime!.minute);
+      final DateTime toDateTime =
+          DateTime(0, 0, 0, selectedToTime!.hour, selectedToTime!.minute);
+      return toDateTime.isAfter(fromDateTime);
+    }
+    return false;
   }
-  return false;
-}
+
   TextEditingController _titleController = TextEditingController();
   TextEditingController _organizerController = TextEditingController();
   TextEditingController _shortDescriptionController = TextEditingController();
-  TextEditingController _fullDescriptionControllerpara1 = TextEditingController();
-  TextEditingController _fullDescriptionControllerpara2 = TextEditingController();
+  TextEditingController _fullDescriptionControllerpara1 =
+      TextEditingController();
+  TextEditingController _fullDescriptionControllerpara2 =
+      TextEditingController();
   TextEditingController _linkController = TextEditingController();
   TextEditingController _placeController = TextEditingController();
-String imageUrl='';
-final CollectionReference event=FirebaseFirestore.instance.collection('events');
- void updateEvent(docId){
-  final data = {
-    'title': _titleController.text,
-    'place': _placeController.text,
-    'time': selectedFromTime!.format(context),
-    'toTime': selectedToTime!.format(context),
-    'date': DateTime.parse(fromDateString!),
-    'toDate': DateTime.parse(toDateString!),
-    'organizer': _organizerController.text,
-    'shortDescription': _shortDescriptionController.text,
-    'longDescription1': _fullDescriptionControllerpara1.text,
-    'longDescription2': _fullDescriptionControllerpara2.text,
-    'link': _linkController.text,
-    'imageURL': imageUrl, // Include the imageURL field
-    'timestamp': FieldValue.serverTimestamp(),
-  };
-  event.doc(docId).update(data);
-}
-void showDialogBox(BuildContext context){
-  showDialog(
-    context: context,
-     builder:(BuildContext context){
-      return AlertDialog(
-      title: Text("Updated"),
-      content:Text("Event details updated successfully"),
-      actions: [
-        TextButton(onPressed: 
-        (){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => EditEvent(),));
-        },
-         child: Text("OK"),
-         ),
-      ],
-    );
+  final uid = FirebaseAuth.instance.currentUser!.uid;
+  String imageUrl = '';
+  final CollectionReference event =
+      FirebaseFirestore.instance.collection('events');
+  void updateEvent(docId) {
+    final data = {
+      'title': _titleController.text,
+      'place': _placeController.text,
+      'time': selectedFromTime!.format(context),
+      'toTime': selectedToTime!.format(context),
+      'date': DateTime.parse(fromDateString!),
+      'toDate': DateTime.parse(toDateString!),
+      'organizer': _organizerController.text,
+      'shortDescription': _shortDescriptionController.text,
+      'longDescription1': _fullDescriptionControllerpara1.text,
+      'longDescription2': _fullDescriptionControllerpara2.text,
+      'link': _linkController.text,
+      'imageURL': imageUrl, // Include the imageURL field
+      'timestamp': FieldValue.serverTimestamp(),
+      'creatorId': uid,
+    };
+    event.doc(docId).update(data);
   }
-  );
-}
-  
+
+  void showDialogBox(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Updated"),
+            content: Text("Event details updated successfully"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditEvent(),
+                      ));
+                },
+                child: Text("OK"),
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-     String fromTimeText = selectedFromTime != null
+    String fromTimeText = selectedFromTime != null
         ? selectedFromTime!.format(context)
         : 'Select From Time';
 
@@ -112,16 +126,17 @@ void showDialogBox(BuildContext context){
         ? selectedToTime!.format(context)
         : 'Select To Time';
 
-    final args=ModalRoute.of(context)!.settings.arguments as Map<String,dynamic>;
-    final docId=args['id'];
-    
-    _titleController.text=args['title'];
-    _organizerController.text=args['organizer'];
-    _placeController.text=args['place'];
-    _shortDescriptionController.text=args['shortDescription'];
-    _fullDescriptionControllerpara1.text=args['longDescription1'];
-    _fullDescriptionControllerpara2.text=args['longDescription2'];
-    _linkController.text=args['link'];
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final docId = args['id'];
+
+    _titleController.text = args['title'];
+    _organizerController.text = args['organizer'];
+    _placeController.text = args['place'];
+    _shortDescriptionController.text = args['shortDescription'];
+    _fullDescriptionControllerpara1.text = args['longDescription1'];
+    _fullDescriptionControllerpara2.text = args['longDescription2'];
+    _linkController.text = args['link'];
     // fromTimeText=args['time'];
     // toTimeText=args['toTime'];
 
@@ -211,50 +226,50 @@ void showDialogBox(BuildContext context){
                 ),
 
                 const SizedBox(
-                  height: 30,
-                ),
+                height: 20,
+              ),
 
-                // From and to time
-        Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: InkWell(
-
-                    onTap: () => _selectFromTime(context),
-                    child: InputDecorator(
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'From Time',
+                Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: InkWell(
+                      onTap: () => _selectFromTime(context),
+                      child: InputDecorator(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'From Time',
+                        ),
+                        child: Text(fromTimeText),
                       ),
-                      child: Text(fromTimeText),
                     ),
                   ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  flex: 1,
-                  child: InkWell(
-                    onTap: () => _selectToTime(context),
-                    child: InputDecorator(
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'To Time',
+                  const SizedBox(width: 20),
+                  Expanded(
+                    flex: 1,
+                    child: InkWell(
+                      onTap: () => _selectToTime(context),
+                      child: InputDecorator(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'To Time',
+                        ),
+                        child: Text(toTimeText),
                       ),
-                      child: Text(toTimeText),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
 
-            Text(
-              isTimeValid() ? '' : 'To Time must be greater than From Time',
-              style: TextStyle(color: Colors.red),
-            ),
-            const SizedBox(
-                  height: 25,
-                ),
+              Text(
+                isTimeValid() ? '' : 'To Time must be greater than From Time',
+                style: TextStyle(color: Colors.red),
+              ),
+
+              const SizedBox(
+                height: 25,
+              ),
+
                 Container(
                   width: double.infinity,
                   height: 50,
@@ -315,12 +330,11 @@ void showDialogBox(BuildContext context){
                 const SizedBox(
                   height: 20,
                 ),
-                
-               
-            // Event Location
+                   
                const SizedBox(
                   height: 20,
                 ),
+
                  ElevatedButton(
                   onPressed: () async {
                     // _pickedImage = (await ImagePicker()
@@ -373,12 +387,12 @@ void showDialogBox(BuildContext context){
                   ),
                 ),
 
-              
-                //submit button
                 const SizedBox(
                   height: 20,
                 ),
-                Container(
+            
+              Container(
+
                   width: double.infinity,
                   height: 50,
                   decoration: BoxDecoration(
@@ -390,8 +404,7 @@ void showDialogBox(BuildContext context){
                       labelText: 'Event Location',
                       // labelStyle: TextStyle(fontSize: 18.0),
                       border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5)
-                      ),
+                          borderRadius: BorderRadius.circular(5)),
                       fillColor: Color.fromARGB(255, 255, 255, 255),
                       filled: true,
                       contentPadding: const EdgeInsets.all(10),
@@ -402,56 +415,54 @@ void showDialogBox(BuildContext context){
                       }
                       return null;
                     },
-                  )
-                ),
+                  )),
 
-                SizedBox(height:20,),
+              SizedBox(
+                height: 20,
+              ),
 
-                // short Description
-                Container(
-                      width: double.infinity,
-                      height: 120,
-                       decoration: BoxDecoration(
+              // short Description
+              Container(
+                width: double.infinity,
+                height: 120,
+                decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(
                       color: Colors.black,
-                    )
+                    )),
+                child: TextFormField(
+                  controller: _shortDescriptionController,
+                  // Set maxLines to null for a multi-line text area
+                  decoration: InputDecoration(
+                    labelText: 'Short Description of the event',
+                    border: InputBorder.none,
+                    fillColor: Color.fromARGB(255, 255, 255, 255),
+                    filled: true,
+                    contentPadding: const EdgeInsets.all(15),
                   ),
-                        child: TextFormField(
-                          controller: _shortDescriptionController,
-                          // Set maxLines to null for a multi-line text area
-                          decoration: InputDecoration(
-                            labelText: 'Short Description of the event',
-                            border: InputBorder.none,
-                            fillColor: Color.fromARGB(255, 255, 255, 255),
-                            filled: true,
-                            contentPadding: const EdgeInsets.all(15),
-                          ),
-                          maxLines:null,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter some text';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    
-
-                const SizedBox(
-                  height: 20,
+                  maxLines: null,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
                 ),
+              ),
 
-                //    Long Description 1
-                  Container(
+              const SizedBox(
+                height: 20,
+              ),
+
+              //    Long Description 1
+              Container(
                   width: double.infinity,
                   height: 200,
-                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(
-                      color: Colors.black,
-                    )
-                  ),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                        color: Colors.black,
+                      )),
                   child: TextFormField(
                     controller: _fullDescriptionControllerpara1,
                     decoration: InputDecoration(
@@ -462,30 +473,28 @@ void showDialogBox(BuildContext context){
                       filled: true,
                       contentPadding: const EdgeInsets.all(15),
                     ),
-                    maxLines:null,
+                    maxLines: null,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter some text';
                       }
                       return null;
                     },
-                  )
-                ),
-          
-                const SizedBox(
-                  height: 20,
-                ),
+                  )),
 
-                //    Long Description 2
-                Container(
+              const SizedBox(
+                height: 20,
+              ),
+
+              //    Long Description 2
+              Container(
                   width: double.infinity,
                   height: 200,
-                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(
-                      color: Colors.black,
-                    )
-                  ),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                        color: Colors.black,
+                      )),
                   child: TextFormField(
                     controller: _fullDescriptionControllerpara2,
                     decoration: InputDecoration(
@@ -496,17 +505,15 @@ void showDialogBox(BuildContext context){
                       filled: true,
                       contentPadding: const EdgeInsets.all(15),
                     ),
-                    maxLines:null,
-                    
-                  )
-                ),
-                
-                const SizedBox(
-                  height: 20,
-                ),
+                    maxLines: null,
+                  )),
 
-                //    Link
-               Container(
+              const SizedBox(
+                height: 20,
+              ),
+
+              //    Link
+              Container(
                   width: double.infinity,
                   height: 50,
                   decoration: BoxDecoration(
@@ -518,16 +525,15 @@ void showDialogBox(BuildContext context){
                       labelText: 'Link',
                       // labelStyle: TextStyle(fontSize: 18.0),
                       border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5)
-                      ),
+                          borderRadius: BorderRadius.circular(5)),
                       fillColor: Color.fromARGB(255, 255, 255, 255),
                       filled: true,
                       contentPadding: const EdgeInsets.all(15),
                     ),
-                    
-                  )
-                ),
-                SizedBox(height:20,),
+                  )),
+              SizedBox(
+                height: 20,
+              ),
 
                 //attach image
                
@@ -559,11 +565,11 @@ void showDialogBox(BuildContext context){
                     ),
                   ),
               ]
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-    );
+        );
+      
   }
 }
-

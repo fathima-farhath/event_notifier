@@ -3,8 +3,8 @@ import 'package:file_picker/file_picker.dart';
 import 'editnotification.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_dropdown/flutter_dropdown.dart';
 import 'package:image_picker/image_picker.dart';
@@ -98,7 +98,7 @@ class _UpdateNotificationState extends State<UpdateNotification> {
       appBar: AppBar(
         title: const Center(child: Text('Update Notifications')),
       ),
-      body: SingleChildScrollView(
+   body: SingleChildScrollView(
         
           child: Container(
             width: double.infinity,

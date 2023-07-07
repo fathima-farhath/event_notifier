@@ -9,7 +9,7 @@ const ScreenCalendar({Key? key});
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Calendar 2023'),
+        title: Text('Event Calendar'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('events').snapshots(),

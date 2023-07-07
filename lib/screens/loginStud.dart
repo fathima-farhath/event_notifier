@@ -1,4 +1,4 @@
-import 'package:event_notifier/screens/feed.dart';
+import 'feedStud.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:firebase_core/firebase_core.dart';
@@ -57,9 +57,10 @@ class _LoginUIState extends State<LoginUI> {
       );
 
       // Login successful, navigate to home page
+
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MyFeed()),
+        MaterialPageRoute(builder: (context) => MyFeeds()),
       );
     } catch (e) {
       // Login failed, show error dialog
@@ -86,6 +87,7 @@ class _LoginUIState extends State<LoginUI> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+     backgroundColor: Color.fromARGB(255, 243, 250, 255),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -195,16 +197,6 @@ class _LoginUIState extends State<LoginUI> {
                     passwordController.text.trim(), context);
                     
               },
-              // onPressed: () {
-              //   FirebaseAuth.instance.signInWithEmailAndPassword(
-              //     email: emailController.text.trim(),
-              //     password: passwordController.text.trim(),
-              //   );
-              //   Navigator.pushReplacement(
-              //     context,
-              //     MaterialPageRoute(builder: (context) => MyFeed()),
-              //   );
-              // },
               style: ElevatedButton.styleFrom(
                 // Set background color to white
               ),

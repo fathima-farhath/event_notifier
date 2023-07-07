@@ -8,12 +8,6 @@ import 'Studentsignup.dart';
 import 'Teachersignup.dart';
 import 'loginHC.dart';
 
-enum UserType {
-  Student,
-  Teacher,
-  Club,
-}
-
 class ScreenUser extends StatefulWidget {
   const ScreenUser({super.key});
 
@@ -27,25 +21,21 @@ class _ScreenUserState extends State<ScreenUser> {
       "title": "Student",
       "image": "images/student.png",
       "loc": () => registerScreen(),
-      "userType": UserType.Student,
     },
     {
       "title": "Faculty",
       "image": "images/teacher.png",
       "loc": () => TeacherSignup(),
-      "userType": UserType.Teacher,
     },
     {
       "title": "HOD",
       "image": "images/hod.png",
       "loc": () => hodLoginUI(),
-      "userType": UserType.Club,
     },
     {
       "title": "Club",
       "image": "images/others.jfif",
       "loc": () => hodLoginUI(),
-      "userType": UserType.Club,
     },
   ];
 

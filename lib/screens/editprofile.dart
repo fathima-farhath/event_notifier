@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'feedHOD.dart';
+import 'feedTeach.dart';
+import 'feedStud.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -6,152 +11,324 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  bool showPassword = false;
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+
+  String userEmail = FirebaseAuth.instance.currentUser!.email!;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+    // usernameController.text = 'John Doe'; // Initial value for username
+    // phoneNumberController.text = '1234567890';
+    emailController.text = userEmail;
+  }
+
+  Future<void> fetchUserData() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      String userId = currentUser.uid;
+
+      DocumentSnapshot<Map<String, dynamic>> studentSnapshot =
+          await FirebaseFirestore.instance
+              .collection('Student')
+              .doc(userId)
+              .get();
+      DocumentSnapshot<Map<String, dynamic>> teacherSnapshot =
+          await FirebaseFirestore.instance
+              .collection('Teacher')
+              .doc(userId)
+              .get();
+      DocumentSnapshot<Map<String, dynamic>> departmentSnapshot =
+          await FirebaseFirestore.instance
+              .collection('Department')
+              .doc(userId)
+              .get();
+      DocumentSnapshot<Map<String, dynamic>> clubSnapshot =
+          await FirebaseFirestore.instance.collection('Club').doc(userId).get();
+
+      if (studentSnapshot.exists) {
+        Map<String, dynamic> studentData = studentSnapshot.data()!;
+        setState(() {
+          usernameController.text = studentData['username'] ?? '';
+          phoneNumberController.text = studentData['Phno'] ?? '';
+        });
+      } else if (teacherSnapshot.exists) {
+        Map<String, dynamic> teacherData = teacherSnapshot.data()!;
+        setState(() {
+          usernameController.text = teacherData['username'] ?? '';
+          phoneNumberController.text = teacherData['Phno'] ?? '';
+        });
+      } else if (departmentSnapshot.exists) {
+        Map<String, dynamic> departmentData = departmentSnapshot.data()!;
+        setState(() {
+          usernameController.text = departmentData['name'] ?? '';
+          phoneNumberController.text = departmentData['Phno'] ?? '';
+        });
+      } else if (clubSnapshot.exists) {
+        Map<String, dynamic> clubData = clubSnapshot.data()!;
+        setState(() {
+          usernameController.text = clubData['name'] ?? '';
+          phoneNumberController.text = clubData['phno'] ?? '';
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Profile'),
-      ),
-      body: Container(
-        padding: EdgeInsets.only(left: 16, top: 25, right: 16),
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            goTofeed(context);
           },
-          child: ListView(
-            children: [
-              SizedBox(
-                height: 15,
-              ),
-              Center(
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              width: 4,
-                              color: Theme.of(context).scaffoldBackgroundColor),
-                          boxShadow: [
-                            BoxShadow(
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                color: Colors.black.withOpacity(0.1),
-                                offset: Offset(0, 10))
-                          ],
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(
-                                "https://images.pexels.com/photos/3307758/pexels-photo-3307758.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=250",
-                              ))),
-                    ),
-                    Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 4,
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                            ),
-                            color: Colors.blue,
-                          ),
-                          child: Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                          ),
-                        )),
-                  ],
+        ),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 60,
+              backgroundColor: Colors.indigo,
+              child: Text(
+                usernameController.text.isNotEmpty
+                    ? usernameController.text[0].toUpperCase()
+                    : '',
+                style: TextStyle(
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
-              SizedBox(
-                height: 35,
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: usernameController,
+              decoration: InputDecoration(
+                labelText: 'Username',
               ),
-              buildTextField("Full Name", "Dor Alex", false),
-              buildTextField("E-mail", "alexd@gmail.com", false),
-              buildTextField("Password", "********", true),
-              SizedBox(
-                height: 35,
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: phoneNumberController,
+              decoration: InputDecoration(
+                labelText: 'Phone Number',
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 50),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                    ),
-                    onPressed: () {},
-                    child: Text("CANCEL",
-                        style: TextStyle(
-                            fontSize: 14,
-                            letterSpacing: 2.2,
-                            color: Colors.black)),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.blue,
-                      padding: EdgeInsets.symmetric(horizontal: 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Text(
-                      "SAVE",
-                      style: TextStyle(
-                          fontSize: 14,
-                          letterSpacing: 2.2,
-                          color: Colors.white),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: emailController,
+              decoration: InputDecoration(
+                labelText: 'Cusat Email ',
+              ),
+            ),
+            SizedBox(height: 4),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'This email cannot be edited',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: const Color.fromARGB(255, 236, 7, 7),
+                ),
+              ),
+            ),
+            SizedBox(height: 0),
+            ElevatedButton(
+              onPressed: () {
+                // Perform save/update logic here
+                String username = usernameController.text;
+                String phoneNumber = phoneNumberController.text;
+                print('Username: $username');
+                print('Phone Number: $phoneNumber');
+
+                updateProfile(username, phoneNumber);
+                goTofeed(context);
+                ;
+              },
+              child: Text('Save'),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget buildTextField(
-      String labelText, String placeholder, bool isPasswordTextField) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 35.0),
-      child: TextField(
-        obscureText: isPasswordTextField ? showPassword : false,
-        decoration: InputDecoration(
-            suffixIcon: isPasswordTextField
-                ? IconButton(
-                    onPressed: () {
-                      setState(() {
-                        showPassword = !showPassword;
-                      });
-                    },
-                    icon: Icon(
-                      Icons.remove_red_eye,
-                      color: Colors.grey,
-                    ),
-                  )
-                : null,
-            contentPadding: EdgeInsets.only(bottom: 3),
-            labelText: labelText,
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: placeholder,
-            hintStyle: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            )),
-      ),
-    );
+  void updateProfile(String username, String phoneNumber) async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      String userId = currentUser.uid;
+
+      //if student
+      final studentDoc = await FirebaseFirestore.instance
+          .collection('Student')
+          .doc(userId)
+          .get();
+      if (studentDoc.exists) {
+        try {
+          await FirebaseFirestore.instance
+              .collection('Student')
+              .doc(userId)
+              .update({
+            'username': username,
+            'Phno': phoneNumber,
+          });
+
+          // Fields updated successfully
+          print('Profile data updated successfully!');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Profile updated successfully'),
+            ),
+          );
+        } catch (e) {
+          // Error occurred while updating fields
+          print('Error updating profile data: $e');
+        }
+      }
+
+      //if teacher
+      final teachDoc = await FirebaseFirestore.instance
+          .collection('Teacher')
+          .doc(userId)
+          .get();
+      if (teachDoc.exists) {
+        try {
+          await FirebaseFirestore.instance
+              .collection('Teacher')
+              .doc(userId)
+              .update({
+            'username': username,
+            'Phno': phoneNumber,
+          });
+
+          // Fields updated successfully
+          print('Profile data updated successfully!');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Profile updated successfully'),
+            ),
+          );
+        } catch (e) {
+          // Error occurred while updating fields
+          print('Error updating profile data: $e');
+        }
+      }
+
+      //if club
+      final clubDoc =
+          await FirebaseFirestore.instance.collection('Club').doc(userId).get();
+
+      if (clubDoc.exists) {
+        print("Club");
+        try {
+          await FirebaseFirestore.instance
+              .collection('Club')
+              .doc(userId)
+              .update({
+            'name': username,
+            'phno': phoneNumber,
+          });
+
+          // Fields updated successfully
+          print('Profile data updated successfully!');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Profile updated successfully'),
+            ),
+          );
+        } catch (e) {
+          // Error occurred while updating fields
+          print('Error updating profile data: $e');
+        }
+      }
+
+      //if hod
+      final hodDoc = await FirebaseFirestore.instance
+          .collection('Department')
+          .doc(userId)
+          .get();
+      if (hodDoc.exists) {
+        try {
+          await FirebaseFirestore.instance
+              .collection('Department')
+              .doc(userId)
+              .update({
+            'name': username,
+            'Phno': phoneNumber,
+          });
+
+          // Fields updated successfully
+          print('Profile data updated successfully!');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Profile updated successfully'),
+            ),
+          );
+        } catch (e) {
+          // Error occurred while updating fields
+          print('Error updating profile data: $e');
+        }
+      }
+    }
+  }
+}
+
+void goTofeed(BuildContext context) async {
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  // Check if user is authenticated
+  User? user = auth.currentUser;
+  try {
+    if (user != null) {
+      String userId = user.uid;
+
+      final studentDoc = await FirebaseFirestore.instance
+          .collection('Student')
+          .doc(userId)
+          .get();
+      if (studentDoc.exists) {
+        print("Student");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyFeeds()),
+        );
+      }
+
+      final teachDoc = await FirebaseFirestore.instance
+          .collection('Teacher')
+          .doc(userId)
+          .get();
+      if (teachDoc.exists) {
+        print("Teacher");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyFeedt()),
+        );
+      }
+
+      final clubDoc =
+          await FirebaseFirestore.instance.collection('Club').doc(userId).get();
+      final hodDoc = await FirebaseFirestore.instance
+          .collection('Department')
+          .doc(userId)
+          .get();
+      if (clubDoc.exists || hodDoc.exists) {
+        print("Club");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyFeed()),
+        );
+      }
+    }
+  } catch (e) {
+    print("error in moving: $e");
   }
 }

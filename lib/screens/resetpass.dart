@@ -1,57 +1,9 @@
-// import 'package:flutter/material.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-
-// class ResetScreen extends StatefulWidget {
-//   @override
-//   _ResetScreenState createState() => _ResetScreenState();
-// }
-
-// class _ResetScreenState extends State<ResetScreen> {
-//   String _email = '';
-//   final auth = FirebaseAuth.instance;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Reset Password'),
-//       ),
-//       body: Column(
-//         children: [
-//           Padding(
-//             padding: const EdgeInsets.all(8.0),
-//             child: TextField(
-//               keyboardType: TextInputType.emailAddress,
-//               decoration: InputDecoration(hintText: 'Email'),
-//               onChanged: (value) {
-//                 setState(() {
-//                   _email = value.trim();
-//                 });
-//               },
-//             ),
-//           ),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceAround,
-//             children: [
-//               ElevatedButton(
-//                 child: Text('Send Request'),
-//                 onPressed: () {
-//                   auth.sendPasswordResetEmail(email: _email);
-//                   Navigator.of(context).pop();
-//                 },
-//                 style: ElevatedButton.styleFrom(
-//                   primary: Theme.of(context).colorScheme.secondary,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+import 'feedHOD.dart';
+import 'feedStud.dart';
+import 'feedTeach.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ResetScreen extends StatelessWidget {
   @override
@@ -62,6 +14,12 @@ class ResetScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Password Reset'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            goTofeed(context);
+          },
+        ),
       ),
       body: Center(
         child: Column(
@@ -105,5 +63,59 @@ class ResetScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void goTofeed(BuildContext context) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    // Check if user is authenticated
+    User? user = auth.currentUser;
+    try {
+      if (user != null) {
+        String userId = user.uid;
+
+        final studentDoc = await FirebaseFirestore.instance
+            .collection('Student')
+            .doc(userId)
+            .get();
+        if (studentDoc.exists) {
+          print("Student");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeeds()),
+          );
+        }
+
+        final teachDoc = await FirebaseFirestore.instance
+            .collection('Teacher')
+            .doc(userId)
+            .get();
+        if (teachDoc.exists) {
+          print("Teacher");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeedt()),
+          );
+        }
+
+        final clubDoc = await FirebaseFirestore.instance
+            .collection('Club')
+            .doc(userId)
+            .get();
+        final hodDoc = await FirebaseFirestore.instance
+            .collection('Department')
+            .doc(userId)
+            .get();
+        if (clubDoc.exists || hodDoc.exists) {
+          print("Club");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeed()),
+          );
+        }
+      }
+    } catch (e) {
+      print("error in moving: $e");
+    }
   }
 }

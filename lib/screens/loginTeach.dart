@@ -1,68 +1,44 @@
-//import 'package:event_notifier/screens/feed.dart';
-import 'package:event_notifier/screens/resetpass.dart';
+import 'feedTeach.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:firebase_core/firebase_core.dart';
-import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
-import 'otp.dart';
+import 'resetpass.dart';
 //import 'feed.dart';
 
-class hodLoginUI extends StatefulWidget {
-  const hodLoginUI({super.key});
+class LoginUI extends StatefulWidget {
+  const LoginUI({super.key});
 
   @override
-  State<hodLoginUI> createState() => _hodLoginUIState();
+  State<LoginUI> createState() => _LoginUIState();
 }
 
-class _hodLoginUIState extends State<hodLoginUI> {
-  final emailControllert = TextEditingController();
-  final passwordControllert = TextEditingController();
-  // final otpController = TextEditingController();
-  EmailOTP myauth = EmailOTP();
-  // late EmailAuth emailAuth;
+class _LoginUIState extends State<LoginUI> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   void dispose() {
-    emailControllert.dispose();
-    passwordControllert.dispose();
+    emailController.dispose();
+    passwordController.dispose();
     super.dispose();
-  }
-
-  //sending otp
-  void sendOTP() async {
-    myauth.setConfig(
-        appEmail: "fathimafarhana3491@gmail.com",
-        appName: "Email OTP",
-        userEmail: emailControllert.text,
-        otpLength: 4,
-        otpType: OTPType.digitsOnly);
-    if (await myauth.sendOTP() == true) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("OTP has been sent"),
-      ));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Oops, OTP send failed"),
-      ));
-    }
   }
 
   bool _isEmailValid = true;
   bool _isPasswordValid = true;
-  //validating login
+
   bool validateForm() {
     bool isValid = true;
 
     // Validate each form field
-    if (emailControllert.text.isEmpty) {
+    if (emailController.text.isEmpty) {
       setState(() => _isEmailValid = false);
       isValid = false;
     } else {
       setState(() => _isEmailValid = true);
     }
 
-    if (passwordControllert.text.isEmpty) {
+    if (passwordController.text.isEmpty) {
       setState(() => _isPasswordValid = false);
       isValid = false;
     } else {
@@ -71,78 +47,29 @@ class _hodLoginUIState extends State<hodLoginUI> {
     return isValid;
   }
 
-  //checking if the email belongd to collection
-  Future<bool> checkEmailBelongsToClub(String email) async {
-    try {
-      final clubSnapshot = await FirebaseFirestore.instance
-          .collection('Club')
-          .where('email', isEqualTo: emailControllert.text.trim())
-          .limit(1)
-          .get();
-
-      final hodSnapshot = await FirebaseFirestore.instance
-          .collection('Department')
-          .where('email', isEqualTo: emailControllert.text.trim())
-          .limit(1)
-          .get();
-
-      return clubSnapshot.size > 0 || hodSnapshot.size > 0;
-    } catch (e) {
-      print('Error checking email: $e');
-      return false;
-    }
-  }
-
-//login fucntion
   Future<void> login(
       String email, String password, BuildContext context) async {
-    String email = emailControllert.text.trim();
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
 
-    // Login successful, navigate to otp screen
-    bool belongsToClubOrHod = await checkEmailBelongsToClub(email);
+      // Login successful, navigate to home page
 
-    if (belongsToClubOrHod) {
-      try {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailControllert.text.trim(),
-          password: passwordControllert.text.trim(),
-        );
-
-        sendOTP();
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => OtpScreen(
-                      myauth: myauth,
-                    )));
-      } catch (e) {
-        // Login failed, show error dialog
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Login Failed'),
-              content: Text(e.toString()),
-              actions: [
-                TextButton(
-                  child: Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MyFeedt()),
+      );
+    } catch (e) {
+      // Login failed, show error dialog
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Login Failed'),
-            content: Text("This email is not validated as the official email"),
+            content: Text(e.toString()),
             actions: [
               TextButton(
                 child: Text('OK'),
@@ -154,14 +81,12 @@ class _hodLoginUIState extends State<hodLoginUI> {
           );
         },
       );
-      print("this email is not validated as the official email");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 243, 250, 255),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -171,10 +96,10 @@ class _hodLoginUIState extends State<hodLoginUI> {
               width: MediaQuery.of(context).size.width,
               child: Center(
                 child: Text(
-                  'Sign In',
+                  'TEACHER Sign In',
                   style: TextStyle(
                       fontSize: 40,
-                      color: Colors.indigo,
+                      color: Colors.blue.withOpacity(.9),
                       fontWeight: FontWeight.w600),
                 ),
               ),
@@ -183,7 +108,7 @@ class _hodLoginUIState extends State<hodLoginUI> {
               width: MediaQuery.of(context).size.width * .8,
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: TextFormField(
-                controller: emailControllert,
+                controller: emailController,
                 onChanged: (value) {
                   setState(() {
                     _isEmailValid = true;
@@ -194,8 +119,7 @@ class _hodLoginUIState extends State<hodLoginUI> {
                   fontSize: 15,
                 ),
                 decoration: InputDecoration(
-                    hintText: 'Enter the Official email id',
-                    labelText: 'Email',
+                    hintText: 'Enter Cusat email',
                     errorText:
                         !_isEmailValid ? 'Please enter a valid email' : null,
                     hintStyle: TextStyle(
@@ -211,7 +135,7 @@ class _hodLoginUIState extends State<hodLoginUI> {
               width: MediaQuery.of(context).size.width * .8,
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: TextFormField(
-                controller: passwordControllert,
+                controller: passwordController,
                 onChanged: (value) {
                   setState(() {
                     _isPasswordValid = true;
@@ -268,21 +192,11 @@ class _hodLoginUIState extends State<hodLoginUI> {
             ),
             ElevatedButton(
               onPressed: () {
-                login(emailControllert.text.trim(),
-                    passwordControllert.text.trim(), context);
+                login(emailController.text.trim(),
+                    passwordController.text.trim(), context);
               },
-              // onPressed: () {
-              //   FirebaseAuth.instance.signInWithEmailAndPassword(
-              //     email: emailController.text.trim(),
-              //     password: passwordController.text.trim(),
-              //   );
-              //   Navigator.pushReplacement(
-              //     context,
-              //     MaterialPageRoute(builder: (context) => MyFeed()),
-              //   );
-              // },
               style: ElevatedButton.styleFrom(
-                primary: Colors.indigo, // Set background color to white
+                primary: Colors.blue, // Set background color to white
               ),
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.3,

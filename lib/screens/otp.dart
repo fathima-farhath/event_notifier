@@ -1,60 +1,5 @@
-// import 'package:flutter/material.dart';
-// import 'package:email_otp/email_otp.dart';
-// import 'package:emailotp/home.dart';
-
-// class OtpScreen extends StatefulWidget {
-//   const OtpScreen({
-//     Key? key,
-//     required this.otpController,
-//   }) : super(key: key);
-//   final otpController = TextEditingController();
-
-//   @override
-//   State<OtpScreen> createState() => _OtpScreenState();
-// }
-
-// class _OtpScreenState extends State<OtpScreen> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('OTP Screen'),
-//       ),
-//       body: Padding(
-//         padding: EdgeInsets.all(16.0),
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             Text(
-//               'Please enter the OTP sent to your email.',
-//               style: TextStyle(fontSize: 18.0),
-//               textAlign: TextAlign.center,
-//             ),
-//             SizedBox(height: 16.0),
-//             TextField(
-//               controller: otpcontroller,
-//               keyboardType: TextInputType.number,
-//               decoration: InputDecoration(
-//                 hintText: 'Enter OTP',
-//               ),
-//             ),
-//             SizedBox(height: 16.0),
-//             ElevatedButton(
-//               onPressed: () {
-//                 // Perform OTP verification here
-//               },
-//               child: Text('Verify OTP'),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:email_otp/email_otp.dart';
-//import 'package:emailotp/home.dart';
-import 'package:event_notifier/screens/feed.dart';
+import 'feedHOD.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -125,67 +70,70 @@ class _OtpScreenState extends State<OtpScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 40,
-          ),
-          const Icon(Icons.dialpad_rounded, size: 50),
-          const SizedBox(
-            height: 40,
-          ),
-          const Text(
-            "Enter OTP send to ur email id",
-            style: TextStyle(fontSize: 30),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Otp(
-                otpController: otp1Controller,
-              ),
-              Otp(
-                otpController: otp2Controller,
-              ),
-              Otp(
-                otpController: otp3Controller,
-              ),
-              Otp(
-                otpController: otp4Controller,
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 40,
-          ),
-          const SizedBox(
-            height: 40,
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              if (await widget.myauth.verifyOTP(
-                      otp: otp1Controller.text +
-                          otp2Controller.text +
-                          otp3Controller.text +
-                          otp4Controller.text) ==
-                  true) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text("OTP is verified"),
-                ));
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const MyFeed()));
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text("Invalid OTP"),
-                ));
-              }
-            },
-            child: const Text(
-              "Confirm",
-              style: TextStyle(fontSize: 20),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 40,
             ),
-          )
-        ],
+            const Icon(Icons.dialpad_rounded, size: 50),
+            const SizedBox(
+              height: 40,
+            ),
+            const Text(
+              "Enter OTP send to ur email id",
+              style: TextStyle(fontSize: 30),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Otp(
+                  otpController: otp1Controller,
+                ),
+                Otp(
+                  otpController: otp2Controller,
+                ),
+                Otp(
+                  otpController: otp3Controller,
+                ),
+                Otp(
+                  otpController: otp4Controller,
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (await widget.myauth.verifyOTP(
+                        otp: otp1Controller.text +
+                            otp2Controller.text +
+                            otp3Controller.text +
+                            otp4Controller.text) ==
+                    true) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("OTP is verified"),
+                  ));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const MyFeed()));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Invalid OTP"),
+                  ));
+                }
+              },
+              child: const Text(
+                "Confirm",
+                style: TextStyle(fontSize: 20),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
