@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Demo App",
-      home: ScreenSplash(),
+      home: MyFeed(),
       theme: ThemeData(primarySwatch: Colors.indigo),
     );
   }

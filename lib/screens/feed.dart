@@ -1,5 +1,6 @@
 import 'package:badges/badges.dart' as badges;
 import 'package:event_notifier/screens/addNotification.dart';
+import 'package:event_notifier/screens/editevents.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'notifications.dart';
@@ -22,6 +23,10 @@ class _MyFeedState extends State<MyFeed> {
       FirebaseFirestore.instance.collection('events');
   final CollectionReference notifications =
       FirebaseFirestore.instance.collection('notifications');
+      final CollectionReference students =
+      FirebaseFirestore.instance.collection('Student');
+       final CollectionReference teachers =
+      FirebaseFirestore.instance.collection('Teacher');
   Icon cusIcon=Icon(Icons.search);
   Widget cusSearchBar=Text("Eventify");
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -29,11 +34,13 @@ class _MyFeedState extends State<MyFeed> {
   List<DocumentSnapshot> events = [];
 List<DocumentSnapshot> allEvents = [];
 int unreadNotificationsCount = 0;
+String studentName = '';
+String studentEmail = '';
   @override
   void initState() {
     super.initState();
     // Get all events from Firestore
-     event.orderBy('timestamp', descending: false).get().then((snapshot) {
+     event.orderBy('timestamp', descending: true).get().then((snapshot) {
       events = snapshot.docs;
       allEvents = snapshot.docs;
       setState(() {});
@@ -74,11 +81,10 @@ int unreadNotificationsCount = 0;
                         events = allEvents
                             .where((event) =>
                                event['title'].toLowerCase().contains(value)||
-                               event['organizer'].toLowerCase().contains(value)).toList(); 
+                               event['organizer'].toLowerCase().contains(value)||
+                               event['place'].toLowerCase().contains(value)).toList(); 
                                //|| event['time'].toLowerCase().contains(value)||
-                              //  event['organizer'].toLowerCase().contains(value)||
-                              //  event['place'].toLowerCase().contains(value)||
-                              //  event['date'].toLowerCase().contains(value)).toList();
+                              //  event['organizer'].toLowerCase().contains(value)).toList();
   
                       }
                     });},
@@ -198,14 +204,25 @@ drawer: Drawer(
           title: Text("Reset Password"),
 
         ),
-        // ListTile(
-        //   leading:IconButton(onPressed: (){}, icon: Icon(Icons.dashboard)),
-        //   title: Text("Go to dashboard"),
-        // ),
+        
         ListTile(
           leading:IconButton(onPressed: (){}, icon: Icon(Icons.logout)),
           title: Text("SignOut"),
-        )
+        ),
+        ListTile(
+          leading:IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>EditEvent()));
+            
+          }, icon: Icon(Icons.dashboard)),
+          title: Text("Go to Event"),
+        ),
+        ListTile(
+          leading:IconButton(onPressed: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>EditNotifications()));
+
+          }, icon: Icon(Icons.dashboard)),
+          title: Text("Go to notification"),
+        ),
     ],
   ),
 ),
@@ -301,11 +318,11 @@ drawer: Drawer(
 
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: event.orderBy('timestamp', descending: false).snapshots(),
+                stream: event.orderBy('timestamp', descending: true).snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return ListView.builder(
-                      reverse:true,
+                      reverse:false,
                       itemCount: events.length,
                       itemBuilder: (context, index) {
                         final DocumentSnapshot eventSnap = events[index];

@@ -98,7 +98,7 @@ class _LoginUIState extends State<LoginUI> {
                   'Sign In',
                   style: TextStyle(
                       fontSize: 40,
-                      color: Colors.blue.withOpacity(.9),
+                      color: Colors.indigo,
                       fontWeight: FontWeight.w600),
                 ),
               ),
@@ -193,6 +193,7 @@ class _LoginUIState extends State<LoginUI> {
               onPressed: () {
                 login(emailController.text.trim(),
                     passwordController.text.trim(), context);
+                    
               },
               // onPressed: () {
               //   FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -205,7 +206,7 @@ class _LoginUIState extends State<LoginUI> {
               //   );
               // },
               style: ElevatedButton.styleFrom(
-                primary: Colors.blue, // Set background color to white
+                // Set background color to white
               ),
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.3,

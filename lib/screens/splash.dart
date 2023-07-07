@@ -81,22 +81,10 @@ class _ScreenSplashState extends State<ScreenSplash> {
     );
   }
 
-  // Future<void> gotoUser() async {
-  //   await Future.delayed(Duration(milliseconds: 1500));
-  //  StreamBuilder<User?>(
-  //       stream: FirebaseAuth.instance.authStateChanges(),
-  //       builder: (context, snapshot) {
-  //         if (snapshot.hasData) {
-  //           return MyFeed();
-  //         } else {
-  //           return ScreenUser();
-  //         }
-  //       },
-  //     ),
-  // }
+ 
 
   Future<void> gotoUser(BuildContext context) async {
-    await Future.delayed(Duration(milliseconds: 1500));
+    await Future.delayed(Duration(milliseconds: 3000));
     FirebaseAuth auth = FirebaseAuth.instance;
 
     // Check if user is authenticated
