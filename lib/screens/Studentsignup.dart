@@ -448,7 +448,7 @@ class _registerScreenState extends State<registerScreen> {
                 decoration: InputDecoration(
                     hintText: 'Create password',
                     errorText: !_isPasswordValid
-                        ? 'Please enter a valid password'
+                        ? 'Please enter a strong password'
                         : null,
                     hintStyle: TextStyle(
                       color: Colors.grey,

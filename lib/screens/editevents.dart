@@ -55,19 +55,13 @@ class _EditEventState extends State<EditEvent> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Add Events"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MyFeed(),
-              ),
-            );
-          },
-        ),
+        actions: [
+            IconButton(onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>MyFeed()));
+            }, icon: Icon(Icons.home)),
+            ],
       ),
-      body: StreamBuilder(
+body: StreamBuilder(
         stream: event
             .where('creatorId',
                 isEqualTo: FirebaseAuth.instance.currentUser!.uid)
@@ -131,7 +125,7 @@ class _EditEventState extends State<EditEvent> {
                               Row(
                                 children: [
                                   Container(
-                                    width: 200,
+                                    width: 150.0,
                                     child: Row(
                                       children: [
                                         Expanded(
@@ -180,8 +174,7 @@ class _EditEventState extends State<EditEvent> {
                                               eventSnap['longDescription2'],
                                           'link': eventSnap['link'],
                                           'id': eventSnap.id,
-                                          'imageURL': eventSnap[
-                                              'imageURL'], // Include the imageURL field
+                                          'imageURL': eventSnap['imageURL'], // Include the imageURL field
                                           'timestamp':
                                               FieldValue.serverTimestamp(),
                                         })),
@@ -222,7 +215,6 @@ class _EditEventState extends State<EditEvent> {
         child: Icon(Icons.add),
         elevation: 0.2,
       ),
-      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }

@@ -161,6 +161,7 @@ class _hodLoginUIState extends State<hodLoginUI> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 243, 250, 255),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -173,7 +174,7 @@ class _hodLoginUIState extends State<hodLoginUI> {
                   'Sign In',
                   style: TextStyle(
                       fontSize: 40,
-                      color: Colors.blue.withOpacity(.9),
+                      color: Colors.indigo,
                       fontWeight: FontWeight.w600),
                 ),
               ),
@@ -281,7 +282,7 @@ class _hodLoginUIState extends State<hodLoginUI> {
               //   );
               // },
               style: ElevatedButton.styleFrom(
-                primary: Colors.blue, // Set background color to white
+                primary: Colors.indigo, // Set background color to white
               ),
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.3,

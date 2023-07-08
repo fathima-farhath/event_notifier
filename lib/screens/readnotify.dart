@@ -39,15 +39,7 @@ class _ReadnotificationState extends State<Readnotification> {
         title: Text(args['title']),
         centerTitle: true,
         elevation: 10,
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => MyFeed()));
-              },
-              icon: Icon(Icons.home)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.more_vert_outlined))
-        ],
+        
       ),
 
       //  body
@@ -154,7 +146,7 @@ class _ReadnotificationState extends State<Readnotification> {
                     ),
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
                         onPressed: () {
@@ -169,14 +161,9 @@ class _ReadnotificationState extends State<Readnotification> {
                       ),
                       Text(
                         '$title.pdf',
-                        style: TextStyle(fontSize: 18.0),
+                        style: TextStyle(color:Colors.white,fontSize: 18.0),
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.download),
-                        color: Colors.white,
-                        iconSize: 28.0,
-                      )
+                      
                     ],
                   ),
                 ),

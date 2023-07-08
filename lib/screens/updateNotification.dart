@@ -3,8 +3,8 @@ import 'package:file_picker/file_picker.dart';
 import 'editnotification.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_dropdown/flutter_dropdown.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,7 +27,10 @@ class _UpdateNotificationState extends State<UpdateNotification> {
   TextEditingController _para2DescController=TextEditingController();
   TextEditingController _linkController = TextEditingController();
   String imageUrl='';
-   String url="";
+  String newImageUrl = '';
+  String url="";
+  String selectedPdfFileName = '';
+  XFile? selectedImage;
   uploadToFirebase() async{
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     File pick=File(result!.files.single.path.toString());
@@ -39,6 +42,9 @@ class _UpdateNotificationState extends State<UpdateNotification> {
     url=await snapshot.ref.getDownloadURL();
     // await FirebaseFirestore.instance.collection('notifications').doc().set({
     //   'fileUrl':url,
+    // });
+    // setState(() {
+    //   selectedPdfFileName = pick.path.split('/').last;
     // });
   }
   final CollectionReference notification=FirebaseFirestore.instance.collection('notifications');
@@ -86,12 +92,13 @@ class _UpdateNotificationState extends State<UpdateNotification> {
   _para2DescController.text=args['para2Desc'];
   _linkController.text=args['link'];
   final docId=args['id'];
-  // imageUrl=args['imageURL'];
+  imageUrl = args['imageURL'];
+  url = args['fileUrl'];
    return Scaffold(
       appBar: AppBar(
         title: const Center(child: Text('Update Notifications')),
       ),
-      body: SingleChildScrollView(
+   body: SingleChildScrollView(
         
           child: Container(
             width: double.infinity,
@@ -281,8 +288,12 @@ class _UpdateNotificationState extends State<UpdateNotification> {
                   ElevatedButton(
                     onPressed: () async {
                        ImagePicker imagePicker=ImagePicker();  
-                    XFile? file= await imagePicker.pickImage(source: ImageSource.camera);
+                    XFile? file= await imagePicker.pickImage(source: ImageSource.gallery);
                   if (file==null) return;
+                 
+                    //  setState(() {
+                    //   selectedImage = file; // Store the selected image file
+                    // });
                       String uniqueFilename=DateTime.now().millisecondsSinceEpoch.toString();
                       Reference referenceRoot=FirebaseStorage.instance.ref();
                       Reference ReferenceDirImage=referenceRoot.child('Notimages');
@@ -321,8 +332,11 @@ class _UpdateNotificationState extends State<UpdateNotification> {
                     ),
                   ),
         
-        
-                    SizedBox(height:20,),
+          Text(
+                selectedImage != null ? selectedImage!.name : '',  
+                style: TextStyle(fontSize: 12.0),
+                ),
+                    
                          ElevatedButton(
         onPressed:() => uploadToFirebase(),
         child: Row(
@@ -355,7 +369,10 @@ class _UpdateNotificationState extends State<UpdateNotification> {
           ),
         ),
       ),
-                  //submit button
+       Text(
+  selectedPdfFileName,
+  style: TextStyle(fontSize: 12.0),
+),           //submit button
         
                   SizedBox(
                     height: 20,

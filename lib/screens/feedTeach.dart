@@ -1,8 +1,6 @@
 import 'dart:math';
-
 import 'package:badges/badges.dart' as badges;
 import 'package:event_notifier/screens/addNotification.dart';
-import 'package:event_notifier/screens/datalist.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +54,7 @@ class _MyFeedtState extends State<MyFeedt> {
     _getUserDataz();
 
     // Get all events from Firestore
-    event.orderBy('timestamp', descending: false).get().then((snapshot) {
+    event.orderBy('timestamp', descending: true).get().then((snapshot) {
       events = snapshot.docs;
       allEvents = snapshot.docs;
       setState(() {});
@@ -97,13 +95,9 @@ class _MyFeedtState extends State<MyFeedt> {
                           } else {
                             events = allEvents
                                 .where((event) =>
-                                    event['title']
-                                        .toLowerCase()
-                                        .contains(value) ||
-                                    event['organizer']
-                                        .toLowerCase()
-                                        .contains(value))
-                                .toList();
+                               event['title'].toLowerCase().contains(value)||
+                               event['organizer'].toLowerCase().contains(value)||
+                               event['place'].toLowerCase().contains(value)).toList(); 
                             //|| event['time'].toLowerCase().contains(value)||
                             //  event['organizer'].toLowerCase().contains(value)||
                             //  event['place'].toLowerCase().contains(value)||
@@ -370,11 +364,11 @@ class _MyFeedtState extends State<MyFeedt> {
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream:
-                    event.orderBy('timestamp', descending: false).snapshots(),
+                    event.orderBy('timestamp', descending: true).snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return ListView.builder(
-                      reverse: true,
+                      reverse: false,
                       itemCount: events.length,
                       itemBuilder: (context, index) {
                         final DocumentSnapshot eventSnap = events[index];

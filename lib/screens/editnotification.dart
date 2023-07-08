@@ -53,17 +53,11 @@ class _EditNotificationsState extends State<EditNotifications> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Notifications"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MyFeed(),
-              ),
-            );
-          },
-        ),
+        actions: [
+            IconButton(onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>MyFeed()));
+            }, icon: Icon(Icons.home)),
+            ],
       ),
       body: StreamBuilder(
         stream: notification
@@ -82,8 +76,7 @@ class _EditNotificationsState extends State<EditNotifications> {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
-                    // color: Colors.amber,
-
+                    // color: Colors.amber
                     height: 80,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -148,12 +141,13 @@ class _EditNotificationsState extends State<EditNotifications> {
                                     settings: RouteSettings(arguments: {
                                       'title': notification['title'],
                                       'broadTitle': notification['broadTitle'],
-                                      'shortDescription':
-                                          notification['shortDescription'],
+                                      'shortDescription':notification['shortDescription'],
                                       'para1Desc': notification['para1Desc'],
                                       'para2Desc': notification['para2Desc'],
                                       'link': notification['link'],
                                       'id': notification.id,
+                                      'fileUrl':notification['fileUrl'],
+                                      'imageURL':notification['imageURL']
                                     }),
                                   ),
                                 );

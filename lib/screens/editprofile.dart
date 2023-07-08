@@ -96,7 +96,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           children: [
             CircleAvatar(
               radius: 60,
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.indigo,
               child: Text(
                 usernameController.text.isNotEmpty
                     ? usernameController.text[0].toUpperCase()

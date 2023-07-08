@@ -62,10 +62,8 @@ class _CreateEventState extends State<CreateEvent> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _organizerController = TextEditingController();
   TextEditingController _shortDescriptionController = TextEditingController();
-  TextEditingController _fullDescriptionControllerpara1 =
-      TextEditingController();
-  TextEditingController _fullDescriptionControllerpara2 =
-      TextEditingController();
+  TextEditingController _fullDescriptionControllerpara1 =TextEditingController();
+  TextEditingController _fullDescriptionControllerpara2 =TextEditingController();
   TextEditingController _linkController = TextEditingController();
   TextEditingController _placeController = TextEditingController();
   final uid = FirebaseAuth.instance.currentUser!.uid;
@@ -91,9 +89,32 @@ class _CreateEventState extends State<CreateEvent> {
       'creatorId': uid,
     };
 
-    await event.add(data);
-  }
+  await event.add(data);
+}
+double uploadProgress = 0.0;
+Future<void> uploadImageToFirebaseStorage(XFile file) async {
+    String uniqueFilename = DateTime.now().millisecondsSinceEpoch.toString();
 
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImage = referenceRoot.child('images');
+    Reference referenceImageToUpload = referenceDirImage.child(uniqueFilename);
+
+    try {
+      UploadTask uploadTask = referenceImageToUpload.putFile(File(file.path));
+      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+        double progress = snapshot.bytesTransferred / snapshot.totalBytes;
+        setState(() {
+          uploadProgress = progress;
+        });
+      });
+      TaskSnapshot taskSnapshot = await uploadTask;
+      imageUrl = await referenceImageToUpload.getDownloadURL();
+    } catch (error) {
+      print(error);
+    }
+  }
+String url="";
+XFile? selectedImage;
   @override
   Widget build(BuildContext context) {
     String fromTimeText = selectedFromTime != null
@@ -393,7 +414,7 @@ class _CreateEventState extends State<CreateEvent> {
                 height: 20,
               ),
 
-              Container(
+               Container(
                   width: double.infinity,
                   height: 50,
                   decoration: BoxDecoration(
@@ -410,68 +431,69 @@ class _CreateEventState extends State<CreateEvent> {
                       filled: true,
                       contentPadding: const EdgeInsets.all(15),
                     ),
-                  )),
-              SizedBox(
-                height: 20,
-              ),
+                    
+                  )
+                ),
+                SizedBox(height:20,),
 
-              //attach image
-              ElevatedButton(
-                onPressed: () async {
-                  // _pickedImage = (await ImagePicker()
-                  //     .pickImage(source: ImageSource.camera))!;
-                  ImagePicker imagePicker = ImagePicker();
-                  XFile? file =
-                      await imagePicker.pickImage(source: ImageSource.camera);
-                  if (file == null) return;
+                //attach image
+                  ElevatedButton(
+                  onPressed: () async {
+                    ImagePicker imagePicker = ImagePicker();
+                    XFile? file = await imagePicker.pickImage(source: ImageSource.gallery);
+                    if (file == null) return;
+                    setState(() {
+                      selectedImage = file; // Store the selected image file
+                      uploadProgress = 0.0; // Reset upload progress
+                    });
 
-                  String uniqueFilename =
-                      DateTime.now().millisecondsSinceEpoch.toString();
-
-                  Reference referenceRoot = FirebaseStorage.instance.ref();
-                  Reference ReferenceDirImage = referenceRoot.child('images');
-                  Reference ReferenceImageToUpload =
-                      ReferenceDirImage.child(uniqueFilename);
-
-                  try {
-                    await ReferenceImageToUpload.putFile(File(file!.path));
-                    imageUrl = await ReferenceImageToUpload.getDownloadURL();
-                  } catch (error) {}
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      Color.fromARGB(255, 185, 185, 185)!),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
+                    await uploadImageToFirebaseStorage(file);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Color.fromARGB(255, 185, 185, 185)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
                     ),
                   ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.attach_file,
+                        color: Colors.black,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Attach an Image',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(
-                      Icons.attach_file,
-                      color: Colors.black,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      'Attach an Image',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ],
-                ),
-              ),
 
-              //submit button
-              const SizedBox(
-                height: 20,
+                if (selectedImage != null && uploadProgress > 0 && uploadProgress < 1)
+                  LinearProgressIndicator(
+                    value: uploadProgress,
+                  ),
+
+                  
+                  Text(
+                selectedImage != null ? selectedImage!.name : '',  
+                style: TextStyle(fontSize: 12.0),
+                ),
+                SizedBox(
+                        height: 10.0,
+                      ),
+                SizedBox(
+                height:20,
               ),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       addEvent();
                       Navigator.push(

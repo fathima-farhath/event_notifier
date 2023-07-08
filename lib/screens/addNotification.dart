@@ -7,7 +7,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_dropdown/flutter_dropdown.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multiselect/multiselect.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -19,38 +21,52 @@ class AddNotification extends StatefulWidget {
 }
 
 class _AddNotificationState extends State<AddNotification> {
+
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _titleController = TextEditingController();
   TextEditingController _broadTitleController = TextEditingController();
   TextEditingController _shortDescriptionController = TextEditingController();
-  // TextEditingController _fullDescriptionController = TextEditingController();
-  TextEditingController _para1DescController = TextEditingController();
-  TextEditingController _para2DescController = TextEditingController();
+  TextEditingController _para1DescController=TextEditingController();
+  TextEditingController _para2DescController=TextEditingController();
   TextEditingController _linkController = TextEditingController();
-  String imageUrl = '';
-  final CollectionReference notification =
-      FirebaseFirestore.instance.collection('notifications');
+  
+  final CollectionReference notification=FirebaseFirestore.instance.collection('notifications');
   final uid = FirebaseAuth.instance.currentUser!.uid;
 
-  void addNotification() {
-    final data = {
-      'title': _titleController.text,
-      'broadTitle': _broadTitleController.text,
-      'shortDescription': _shortDescriptionController.text,
-      'para1Desc': _para1DescController.text,
-      'para2Desc': _para2DescController.text,
-      'link': _linkController.text,
-      'timestamp': FieldValue.serverTimestamp(),
-      'imageURL': imageUrl,
-      'fileUrl': url,
-      'creatorId': uid,
+  void addNotification(){
+    final data= {
+    'title':_titleController.text,
+    'broadTitle':_broadTitleController.text,
+    'shortDescription':_shortDescriptionController.text,
+    'para1Desc':_para1DescController.text,
+    'para2Desc':_para2DescController.text,
+    'link':_linkController.text,
+    'timestamp': FieldValue.serverTimestamp(),  
+    'imageURL':imageUrl,
+    'fileUrl':url,
+    'department':selectedDepartments,
+    'creatorId': uid,
     };
-
-    notification.add(data);
+ notification.add(data);
   }
 
-  String dept = '';
+ 
+  uploadToFirebase() async{
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    File pick=File(result!.files.single.path.toString());
+    var file=pick.readAsBytesSync();
+    String uniqueFilename=DateTime.now().millisecondsSinceEpoch.toString();
+    var pdfFile=FirebaseStorage.instance.ref().child(uniqueFilename).child('Notification_docs');
+    UploadTask task=pdfFile.putData(file);
+    TaskSnapshot snapshot=await task;
+    url=await snapshot.ref.getDownloadURL();
+    setState(() {
+      selectedPdfFileName = pick.path.split('/').last;
+    });
+  }
+   
+   
 
   void _showSuccessDialog(BuildContext context) {
     showDialog(
@@ -77,29 +93,20 @@ class _AddNotificationState extends State<AddNotification> {
     );
   }
 
-  String url = "";
-  uploadToFirebase() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    File pick = File(result!.files.single.path.toString());
-    var file = pick.readAsBytesSync();
-    String uniqueFilename = DateTime.now().millisecondsSinceEpoch.toString();
-    var pdfFile = FirebaseStorage.instance
-        .ref()
-        .child(uniqueFilename)
-        .child('Notification_docs');
-    UploadTask task = pdfFile.putData(file);
-    TaskSnapshot snapshot = await task;
-    url = await snapshot.ref.getDownloadURL();
-    // await FirebaseFirestore.instance.collection('notifications').doc().set({
-    //   'fileUrl':url,
-    // });
-  }
-
+  
+  String imageUrl='';
+  String url="";
+  String selectedPdfFileName = '';
+  XFile? selectedImage;
+  List<String> allDepartments = ['IT','CS','EEE','SF','MECH','EC','CIVIL'];
+  List<String> selectedDepartments = [];
+  bool isSelectionRequired = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Center(child: Text('Add Notifications')),
+        
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -255,42 +262,19 @@ class _AddNotificationState extends State<AddNotification> {
                 height: 20,
               ),
 
-              // Link
-              Container(
-                  width: double.infinity,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: TextFormField(
-                    controller: _linkController,
-                    decoration: InputDecoration(
-                      labelText: 'Link',
-                      // labelStyle: TextStyle(fontSize: 18.0),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5)),
-                      fillColor: Color.fromARGB(255, 255, 255, 255),
-                      filled: true,
-                      contentPadding: const EdgeInsets.all(15),
-                    ),
-                  )),
-
-              SizedBox(
-                height: 20,
-              ),
-
-              //attach image
-              ElevatedButton(
-                onPressed: () async {
-                  // _pickedImage = (await ImagePicker()
-                  //     .pickImage(source: ImageSource.camera))!;
-                  ImagePicker imagePicker = ImagePicker();
-                  XFile? file =
-                      await imagePicker.pickImage(source: ImageSource.gallery);
-                  if (file == null) return;
-
-                  String uniqueFilename =
-                      DateTime.now().millisecondsSinceEpoch.toString();
+             
+                //attach image
+                ElevatedButton(
+                  onPressed: () async {
+                    // _pickedImage = (await ImagePicker()
+                    //     .pickImage(source: ImageSource.camera))!;
+                ImagePicker imagePicker=ImagePicker();  
+                  XFile? file= await imagePicker.pickImage(source: ImageSource.gallery);
+                if (file==null) return;
+                     setState(() {
+                      selectedImage = file; // Store the selected image file
+                    });
+                    String uniqueFilename=DateTime.now().millisecondsSinceEpoch.toString();
 
                   Reference referenceRoot = FirebaseStorage.instance.ref();
                   Reference ReferenceDirImage =
@@ -313,6 +297,7 @@ class _AddNotificationState extends State<AddNotification> {
                     ),
                   ),
                 ),
+
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
@@ -332,69 +317,126 @@ class _AddNotificationState extends State<AddNotification> {
               ),
 
               // attach file
-              ElevatedButton(
-                onPressed: () => uploadToFirebase(),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.file_copy,
-                      color: Colors.black,
-                    ),
-                    SizedBox(
-                      height: 30,
-                      width: 10,
-                    ),
-                    Text(
-                      "Attach a file(pdf only)",
-                      style: TextStyle(
-                        color: Colors.black,
+              
+                  Text(
+                selectedImage != null ? selectedImage!.name : '',  
+                style: TextStyle(fontSize: 12.0),
+                ),
+                SizedBox(
+                height:20,
+              ),
+              
+                // attach file
+                ElevatedButton(
+        onPressed:() => uploadToFirebase(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.file_copy,
+              color: Colors.black,
+            ),
+            SizedBox(
+              height: 30,
+              width: 10,
+            ),
+            Text(
+              "Attach a file(pdf only)",
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(
+            Color.fromARGB(255, 185, 185, 185),
+          ),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+        ),
+      ),
+Text(
+  selectedPdfFileName,
+  style: TextStyle(fontSize: 12.0),
+),
+SizedBox(height: 10),
+
+               Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextFormField(
+                    controller: _linkController,
+                    decoration: InputDecoration(
+                      labelText: 'Link',
+                      // labelStyle: TextStyle(fontSize: 18.0),
+                      border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5)
                       ),
+                      fillColor: Color.fromARGB(255, 255, 255, 255),
+                      filled: true,
+                      contentPadding: const EdgeInsets.all(15),
                     ),
-                  ],
+                    
+                  )
                 ),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    Color.fromARGB(255, 185, 185, 185),
-                  ),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                ),
-              ),
 
-              //submit button
+                SizedBox(height:20,),  
+                //submit button
 
-              SizedBox(
-                height: 20,
-              ),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
+             DropDownMultiSelect(
+              options:  allDepartments,
+              selectedValues: selectedDepartments,
+              onChanged: (value) {
+                print('selected fruit $value');
+                setState(() {
+                  selectedDepartments = value;
+                });
+                print('you have selected $selectedDepartments departments.');
+              },
+              whenEmpty: 'Select the deparments to alert',
+                
+            ),
+           
+
+            SizedBox(
+              height: 10,
+            ),
+           
+               
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
                       addNotification();
-                      _showSuccessDialog(context);
-                    }
-                  },
-                  style: ButtonStyle(
-                    minimumSize: MaterialStatePropertyAll(Size(2500, 50)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
+                      _showSuccessDialog(context); 
+                                       }
+                       },
+                    style: ButtonStyle(
+                      minimumSize: MaterialStatePropertyAll(Size(2500,50)),
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                    ),
+                      child: Text(
+                        'Add Notification',
+                        style: TextStyle(
+                          fontSize: 20,
+                          
+                        ),
                       ),
                     ),
                   ),
-                  child: Text(
-                    'Add Notification',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-            ]),
+              ]
+            ),
           ),
         ),
       ),
