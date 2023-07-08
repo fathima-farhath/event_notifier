@@ -92,7 +92,25 @@ class _AddNotificationState extends State<AddNotification> {
       },
     );
   }
-
+void _showDepartmentSelectionError(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Warning'),
+          content: const Text('Please select at least one department to alert.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
   
   String imageUrl='';
   String url="";
@@ -413,10 +431,14 @@ SizedBox(height: 10),
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                      addNotification();
-                      _showSuccessDialog(context); 
-                                       }
+                      if (selectedDepartments.isEmpty) {
+                  _showDepartmentSelectionError(context);
+                } else {
+                  if (_formKey.currentState!.validate()) {
+                    addNotification();
+                    _showSuccessDialog(context);
+                  }
+                }
                        },
                     style: ButtonStyle(
                       minimumSize: MaterialStatePropertyAll(Size(2500,50)),

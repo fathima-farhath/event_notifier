@@ -87,7 +87,7 @@ class _LoginUIState extends State<LoginUI> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-           backgroundColor: Color.fromARGB(255, 243, 250, 255),
+    backgroundColor: Color.fromARGB(255, 243, 250, 255),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -97,7 +97,7 @@ class _LoginUIState extends State<LoginUI> {
               width: MediaQuery.of(context).size.width,
               child: Center(
                 child: Text(
-                  'TEACHER Sign In',
+                  'Sign In',
                   style: TextStyle(
                       fontSize: 40,
                       color: Colors.indigo,
