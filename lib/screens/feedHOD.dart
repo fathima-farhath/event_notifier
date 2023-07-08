@@ -195,7 +195,7 @@ class _MyFeedState extends State<MyFeed> {
                       height: 3,
                     ),
                     Text(
-                      "Department: $dept",
+                      "$dept",
                       style: TextStyle(
                         fontSize: 18.0,
                         color: Color.fromARGB(255, 255, 255, 255),
