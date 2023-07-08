@@ -340,7 +340,7 @@ class _UpdateEventState extends State<UpdateEvent> {
                     // _pickedImage = (await ImagePicker()
                     //     .pickImage(source: ImageSource.camera))!;
                 ImagePicker imagePicker=ImagePicker();  
-                  XFile? file= await imagePicker.pickImage(source: ImageSource.camera);
+                  XFile? file= await imagePicker.pickImage(source: ImageSource.gallery);
                 if (file==null) return;
 
                     String uniqueFilename=DateTime.now().millisecondsSinceEpoch.toString();
