@@ -1,19 +1,15 @@
-import 'feedStud.dart';
+import 'feedAdmin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'forgetpass.dart';
-//import 'feed.dart';
 
-class LoginUI extends StatefulWidget {
-  const LoginUI({super.key});
+class LoginUIa extends StatefulWidget {
+  const LoginUIa({super.key});
 
   @override
-  State<LoginUI> createState() => _LoginUIState();
+  State<LoginUIa> createState() => _LoginUIaState();
 }
 
-class _LoginUIState extends State<LoginUI> {
+class _LoginUIaState extends State<LoginUIa> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -57,10 +53,9 @@ class _LoginUIState extends State<LoginUI> {
       );
 
       // Login successful, navigate to home page
-
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MyFeeds()),
+        MaterialPageRoute(builder: (context) => AdminScreen()),
       );
     } catch (e) {
       // Login failed, show error dialog
@@ -97,7 +92,7 @@ class _LoginUIState extends State<LoginUI> {
               width: MediaQuery.of(context).size.width,
               child: Center(
                 child: Text(
-                  'Sign In',
+                  'Login to Access',
                   style: TextStyle(
                       fontSize: 40,
                       color: Colors.indigo,
@@ -120,7 +115,7 @@ class _LoginUIState extends State<LoginUI> {
                   fontSize: 15,
                 ),
                 decoration: InputDecoration(
-                    hintText: 'Enter Cusat email',
+                    hintText: 'Enter email',
                     errorText:
                         !_isEmailValid ? 'Please enter a valid email' : null,
                     hintStyle: TextStyle(
@@ -168,15 +163,9 @@ class _LoginUIState extends State<LoginUI> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ResetScreen(),
-                          ));
-                    },
+                    onTap: () {},
                     child: Text(
-                      'Forgot password?',
+                      '',
                       style: TextStyle(
                         color:
                             Color.fromARGB(255, 33, 134, 206).withOpacity(.9),

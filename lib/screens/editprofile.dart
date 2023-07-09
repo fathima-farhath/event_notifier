@@ -71,7 +71,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         Map<String, dynamic> clubData = clubSnapshot.data()!;
         setState(() {
           usernameController.text = clubData['name'] ?? '';
-          phoneNumberController.text = clubData['phno'] ?? '';
+          phoneNumberController.text = clubData['Phno'] ?? '';
         });
       }
     }

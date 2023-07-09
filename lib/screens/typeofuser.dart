@@ -7,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'Studentsignup.dart';
 import 'Teachersignup.dart';
 import 'loginHC.dart';
+import 'loginAdmn.dart';
 
 class ScreenUser extends StatefulWidget {
   const ScreenUser({super.key});
@@ -36,6 +37,11 @@ class _ScreenUserState extends State<ScreenUser> {
       "title": "Club",
       "image": "images/others.jfif",
       "loc": () => hodLoginUI(),
+    },
+    {
+      "title": "Admin",
+      "image": "images/admin.webp",
+      "loc": () => LoginUIa(),
     },
   ];
 

@@ -51,7 +51,7 @@ class _MyFeedState extends State<MyFeed> {
     _getUserData();
 
     // Get all events from Firestore
-     event.orderBy('timestamp', descending: true).get().then((snapshot) {
+    event.orderBy('timestamp', descending: true).get().then((snapshot) {
       events = snapshot.docs;
       allEvents = snapshot.docs;
       setState(() {});
@@ -78,41 +78,48 @@ class _MyFeedState extends State<MyFeed> {
           IconButton(
             onPressed: () {
               setState(() {
-                if(this.cusIcon.icon==Icons.search){
-                  this.cusIcon=Icon(Icons.cancel);
-                  this.cusSearchBar=TextField(
-                    controller: searchController,
-                    textInputAction: TextInputAction.go, 
-                    onChanged: (val) {setState(() {
-                      final String value = searchController.text.toLowerCase();
-                       if (value.isEmpty) {
-                        events = allEvents; // Restore the complete list
-                      } else {
-                        events = allEvents
-                            .where((event) =>
-                               event['title'].toLowerCase().contains(value)||
-                               event['organizer'].toLowerCase().contains(value)||
-                               event['place'].toLowerCase().contains(value)).toList(); 
-                               //|| event['time'].toLowerCase().contains(value)||
-                              //  event['organizer'].toLowerCase().contains(value)).toList();
-  
-                      }
-                    });},
-                    decoration:InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "Search here...",
-                      hintStyle: TextStyle(
-                        color:Colors.white,
-                      )
-                    ),
-                    style:TextStyle(
-                      color: Colors.white,
-                      fontSize:16.0,
-                    )
-                  );
-                }else{
-                  this.cusIcon=Icon(Icons.search);
-                  this.cusSearchBar=Text("Eventify");
+                if (this.cusIcon.icon == Icons.search) {
+                  this.cusIcon = Icon(Icons.cancel);
+                  this.cusSearchBar = TextField(
+                      controller: searchController,
+                      textInputAction: TextInputAction.go,
+                      onChanged: (val) {
+                        setState(() {
+                          final String value =
+                              searchController.text.toLowerCase();
+                          if (value.isEmpty) {
+                            events = allEvents; // Restore the complete list
+                          } else {
+                            events = allEvents
+                                .where((event) =>
+                                    event['title']
+                                        .toLowerCase()
+                                        .contains(value) ||
+                                    event['organizer']
+                                        .toLowerCase()
+                                        .contains(value) ||
+                                    event['place']
+                                        .toLowerCase()
+                                        .contains(value))
+                                .toList();
+                            //|| event['time'].toLowerCase().contains(value)||
+                            //  event['organizer'].toLowerCase().contains(value)).toList();
+                          }
+                        });
+                      },
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Search here...",
+                          hintStyle: TextStyle(
+                            color: Colors.white,
+                          )),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                      ));
+                } else {
+                  this.cusIcon = Icon(Icons.search);
+                  this.cusSearchBar = Text("Eventify");
                   events = allEvents;
                   searchController.clear();
                 }
@@ -361,11 +368,12 @@ class _MyFeedState extends State<MyFeed> {
             SizedBox(height: 10),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: event.orderBy('timestamp', descending: true).snapshots(),
+                stream:
+                    event.orderBy('timestamp', descending: true).snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return ListView.builder(
-                      reverse:false,
+                      reverse: false,
                       itemCount: events.length,
                       itemBuilder: (context, index) {
                         final DocumentSnapshot eventSnap = events[index];
@@ -630,7 +638,7 @@ class _MyFeedState extends State<MyFeed> {
           setState(() {
             username = clubDoc.get('name');
             dept = clubDoc.get('dept');
-            phno = clubDoc.get('phno');
+            phno = clubDoc.get('Phno');
           });
         } else {
           print("Document does not exist for the user");

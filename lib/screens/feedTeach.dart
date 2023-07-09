@@ -16,6 +16,7 @@ import 'resetpass.dart';
 import 'typeofuser.dart';
 import 'editevents.dart';
 import 'editprofile.dart';
+import 'deleteAcc.dart';
 
 class MyFeedt extends StatefulWidget {
   const MyFeedt({Key? key}) : super(key: key);
@@ -95,9 +96,16 @@ class _MyFeedtState extends State<MyFeedt> {
                           } else {
                             events = allEvents
                                 .where((event) =>
-                               event['title'].toLowerCase().contains(value)||
-                               event['organizer'].toLowerCase().contains(value)||
-                               event['place'].toLowerCase().contains(value)).toList(); 
+                                    event['title']
+                                        .toLowerCase()
+                                        .contains(value) ||
+                                    event['organizer']
+                                        .toLowerCase()
+                                        .contains(value) ||
+                                    event['place']
+                                        .toLowerCase()
+                                        .contains(value))
+                                .toList();
                             //|| event['time'].toLowerCase().contains(value)||
                             //  event['organizer'].toLowerCase().contains(value)||
                             //  event['place'].toLowerCase().contains(value)||
@@ -271,6 +279,17 @@ class _MyFeedtState extends State<MyFeedt> {
                   },
                   icon: Icon(Icons.logout)),
               title: Text("SignOut"),
+            ),
+            ListTile(
+              leading: IconButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => deleteUser()),
+                    );
+                  },
+                  icon: Icon(Icons.delete_forever)),
+              title: Text("Delete Account"),
             )
           ],
         ),
