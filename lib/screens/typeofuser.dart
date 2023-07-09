@@ -81,7 +81,7 @@ class _ScreenUserState extends State<ScreenUser> {
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
                     child: Text(
-                      'Select the User Type: ',
+                      'Select the User Type ',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 24,
