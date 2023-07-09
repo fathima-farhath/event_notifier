@@ -48,6 +48,12 @@ class deleteUser extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Delete Account'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            goTofeed(context);
+          },
+        ),
       ),
       body: Center(
         child: Padding(
@@ -127,5 +133,43 @@ class deleteUser extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void goTofeed(BuildContext context) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    // Check if user is authenticated
+    User? user = auth.currentUser;
+    try {
+      if (user != null) {
+        String userId = user.uid;
+
+        final studentDoc = await FirebaseFirestore.instance
+            .collection('Student')
+            .doc(userId)
+            .get();
+        if (studentDoc.exists) {
+          print("Student");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeeds()),
+          );
+        }
+
+        final teachDoc = await FirebaseFirestore.instance
+            .collection('Teacher')
+            .doc(userId)
+            .get();
+        if (teachDoc.exists) {
+          print("Teacher");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeedt()),
+          );
+        }
+      }
+    } catch (e) {
+      print("error in moving: $e");
+    }
   }
 }
