@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'readnotify.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MyNotifications extends StatefulWidget {
   const MyNotifications({Key? key}) : super(key: key);
@@ -14,8 +15,58 @@ class _MyNotificationsState extends State<MyNotifications> {
   final CollectionReference notification =
       FirebaseFirestore.instance.collection('notifications');
 
+  String? selectedDepartment; // Placeholder for the selected department
+
   @override
   Widget build(BuildContext context) {
+   
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+  FirebaseFirestore.instance
+      .collection('Student')
+      .doc(user.uid)
+      .get()
+      .then((DocumentSnapshot userSnapshot) {
+    setState(() {
+      selectedDepartment = userSnapshot['dept'];
+    });
+  });
+
+FirebaseFirestore.instance
+      .collection('Teacher')
+      .doc(user.uid)
+      .get()
+      .then((DocumentSnapshot userSnapshot) {
+    setState(() {
+      selectedDepartment =null;
+    });
+  });
+
+  FirebaseFirestore.instance
+      .collection('Department')
+      .doc(user.uid)
+      .get()
+      .then((DocumentSnapshot departmentSnapshot) {
+    if (departmentSnapshot.exists) {
+      setState(() {
+        selectedDepartment = null; // Set selectedDepartment to null to display all notifications
+      });
+    }
+  });
+
+  FirebaseFirestore.instance
+      .collection('Club')
+      .doc(user.uid)
+      .get()
+      .then((DocumentSnapshot clubSnapshot) {
+    if (clubSnapshot.exists) {
+      setState(() {
+        selectedDepartment = null; // Set selectedDepartment to null to display all notifications
+      });
+    }
+  });
+}
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Notifications"),
@@ -23,14 +74,18 @@ class _MyNotificationsState extends State<MyNotifications> {
         elevation: 10,
       ),
       body: StreamBuilder(
-        stream: notification.orderBy('timestamp', descending: false).snapshots(),
+        stream:  selectedDepartment != null
+        ? notification
+            .where('department', arrayContains: selectedDepartment)
+            .orderBy('timestamp', descending: true)
+            .snapshots()
+        : notification.orderBy('timestamp', descending: true).snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                final DocumentSnapshot notificationSnap =
-                    snapshot.data!.docs.reversed.toList()[index];
+                final DocumentSnapshot notificationSnap = snapshot.data!.docs[index];
                 final Timestamp? timestamp = notificationSnap['timestamp'];
                 final DateTime? dateTime = timestamp?.toDate();
                 final formatter = DateFormat('MM/dd/yyyy  hh:mm a');
@@ -154,7 +209,16 @@ class _MyNotificationsState extends State<MyNotifications> {
               },
             );
           }
-          return Container();
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
     );

@@ -329,10 +329,6 @@ class _UpdateEventState extends State<UpdateEvent> {
                 height: 20,
               ),
 
-              const SizedBox(
-                height: 20,
-              ),
-
               ElevatedButton(
                 onPressed: () async {
                   // _pickedImage = (await ImagePicker()
