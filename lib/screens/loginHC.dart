@@ -1,5 +1,3 @@
-//import 'package:event_notifier/screens/feed.dart';
-import 'package:event_notifier/screens/resetpass.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:firebase_core/firebase_core.dart';
@@ -235,33 +233,6 @@ class _hodLoginUIState extends State<hodLoginUI> {
             ),
             SizedBox(
               height: 15,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width * 0.8,
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ResetScreen(),
-                          ));
-                    },
-                    child: Text(
-                      'Forgot password?',
-                      style: TextStyle(
-                        color:
-                            Color.fromARGB(255, 33, 134, 206).withOpacity(.9),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  )
-                ],
-              ),
             ),
             SizedBox(
               height: 40,

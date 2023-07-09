@@ -1,3 +1,4 @@
+import 'package:event_notifier/screens/feedAdmin.dart';
 import 'package:event_notifier/screens/feedStud.dart';
 import 'package:event_notifier/screens/feedTeach.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -84,8 +85,6 @@ class _ScreenSplashState extends State<ScreenSplash> {
     );
   }
 
- 
-
   Future<void> gotoUser(BuildContext context) async {
     await Future.delayed(Duration(milliseconds: 3000));
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -95,6 +94,18 @@ class _ScreenSplashState extends State<ScreenSplash> {
     try {
       if (user != null) {
         String userId = user.uid;
+
+        final adminDoc = await FirebaseFirestore.instance
+            .collection('admin')
+            .doc(userId)
+            .get();
+        if (adminDoc.exists) {
+          print("Admin");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AdminScreen()),
+          );
+        }
 
         final studentDoc = await FirebaseFirestore.instance
             .collection('Student')

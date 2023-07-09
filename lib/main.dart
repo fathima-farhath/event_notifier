@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'screens/splash.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'screens/notifications.dart';
 import 'screens/updateNotification.dart';
 import 'screens/readnotify.dart';

@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'resetpass.dart';
+import 'forgetpass.dart';
 //import 'feed.dart';
 
 class LoginUI extends StatefulWidget {
