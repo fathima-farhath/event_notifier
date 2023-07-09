@@ -9,7 +9,9 @@ import 'package:flutter_dropdown/flutter_dropdown.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 class CreateEvent extends StatefulWidget {
   const CreateEvent({Key? key}) : super(key: key);
 
@@ -59,6 +61,38 @@ class _CreateEventState extends State<CreateEvent> {
     return false;
   }
 
+// void sendPushNotification() async {
+//   final String serverKey = 'AAAAQzLAQmw:APA91bFpoZhEq5qhmiVC8wEQCOxJ2CIJXF5WNOoqs4o7qMexYt8BlFYe9zFzrorObmSUexZkXyE-wVK1aPvE3bUrSVUVzZe6Q5kjTcqCcNSB6hRrI3Q3XZ_qDHPa0POhA25pyeDh_Awo';
+//   final String notificationTitle = 'New Event';
+//   final String notificationBody = 'A new event has been added.';
+//   final String topic = 'events';
+
+//   final Uri url = Uri.parse('https://fcm.googleapis.com/fcm/send');
+//   final Map<String, dynamic> body = {
+//     'notification': {
+//       'title': notificationTitle,
+//       'body': notificationBody,
+//     },
+//     'to': '/topics/$topic',
+//   };
+//   final Map<String, String> headers = {
+//     'Content-Type': 'application/json',
+//     'Authorization': 'key=$serverKey',
+//   };
+
+//   final response = await http.post(
+//     url,
+//     headers: headers,
+//     body: jsonEncode(body),
+//   );
+
+//   if (response.statusCode == 200) {
+//     print('Push notification sent successfully');
+//   } else {
+//     print('Failed to send push notification');
+//   }
+// }
+  
   TextEditingController _titleController = TextEditingController();
   TextEditingController _organizerController = TextEditingController();
   TextEditingController _shortDescriptionController = TextEditingController();
@@ -496,6 +530,7 @@ XFile? selectedImage;
                     onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       addEvent();
+                      // sendPushNotification();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
