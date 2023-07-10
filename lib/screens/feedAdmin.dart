@@ -10,64 +10,101 @@ class AdminScreen extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.indigo,
           title: Text('Admin'),
         ),
-        body: Center(
-          child: GridView.count(
-            crossAxisCount: 1,
-            childAspectRatio: 3,
+        body: SingleChildScrollView(
+          child: Column(
             children: [
-              Card(
-                margin: EdgeInsets.all(10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "CLUB",
-                      style: TextStyle(fontSize: 20),
+              GridView.count(
+                shrinkWrap: true,
+                crossAxisCount: 2,
+                mainAxisSpacing: 20,
+                crossAxisSpacing: 20,
+                padding: EdgeInsets.all(20),
+                children: [
+                  Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {
+                    child: InkWell(
+                      onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DepartmentListPage()));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DepartmentListPage(),
+                          ),
+                        );
                       },
-                      child: Text("VIEW"),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.group,
+                            size: 50,
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "CLUB",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
-              Card(
-                margin: EdgeInsets.all(10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "DEPARTMENT",
-                      style: TextStyle(fontSize: 20),
+                  ),
+                  Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {
+                    child: InkWell(
+                      onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DepartmentListPage1()));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DepartmentListPage1(),
+                          ),
+                        );
                       },
-                      child: Text("VIEW"),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.account_balance,
+                            size: 50,
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "DEPARTMENT",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 20),
               ElevatedButton(
+                
                 onPressed: () {
                   FirebaseAuth.instance.signOut();
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ScreenUser()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ScreenUser(),
+                    ),
+                  );
                 },
+                style: ElevatedButton.styleFrom(
+                  
+                  backgroundColor: Colors.indigo,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
                 child: Text("Logout"),
               ),
             ],
