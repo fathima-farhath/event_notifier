@@ -4,8 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class ScreenCalendar extends StatelessWidget {
-const ScreenCalendar({Key? key});
-@override
+  const ScreenCalendar({Key? key});
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -16,21 +17,35 @@ const ScreenCalendar({Key? key});
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Appointment> appointments = [];
+            DateTime currentDate = DateTime.now();
+            
             snapshot.data!.docs.forEach((document) {
-              Map<String, dynamic> eventData = document.data() as Map<String, dynamic>;
+              Map<String, dynamic> eventData =
+                  document.data() as Map<String, dynamic>;
               Timestamp eventTimestamp = eventData['date'];
               DateTime eventDate = eventTimestamp.toDate();
-              DateTime startTime = DateFormat('h:mm a').parse(eventData['time']);
-              DateTime endTime = DateFormat('h:mm a').parse(eventData['toTime']);
+              DateTime startTime =
+                  DateFormat('h:mm a').parse(eventData['time']);
+              DateTime endTime =
+                  DateFormat('h:mm a').parse(eventData['toTime']);
+              
+              // Set different colors for old events
+              Color appointmentColor = currentDate.isAfter(eventDate)
+                  ? Colors.grey // Color for old events
+                  : Colors.green; // Default color for new events
+
               appointments.add(Appointment(
-                startTime: DateTime(eventDate.year, eventDate.month, eventDate.day, startTime.hour, startTime.minute),
-                endTime: DateTime(eventDate.year, eventDate.month, eventDate.day, endTime.hour, endTime.minute),
+                startTime: DateTime(eventDate.year, eventDate.month, eventDate.day,
+                    startTime.hour, startTime.minute),
+                endTime: DateTime(eventDate.year, eventDate.month, eventDate.day,
+                    endTime.hour, endTime.minute),
                 subject: eventData['title'],
-                color: Colors.green,
+                color: appointmentColor,
                 startTimeZone: '',
                 endTimeZone: '',
               ));
             });
+
             return SfCalendar(
               view: CalendarView.schedule,
               scheduleViewSettings: ScheduleViewSettings(
@@ -91,4 +106,3 @@ class AppointmentDataSource extends CalendarDataSource {
     this.appointments = appointments;
   }
 }
-
