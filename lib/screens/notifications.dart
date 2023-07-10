@@ -18,55 +18,59 @@ class _MyNotificationsState extends State<MyNotifications> {
   String? selectedDepartment; // Placeholder for the selected department
 
   @override
-  Widget build(BuildContext context) {
-   
+  void initState() {
+    super.initState();
+
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-  FirebaseFirestore.instance
-      .collection('Student')
-      .doc(user.uid)
-      .get()
-      .then((DocumentSnapshot userSnapshot) {
-    setState(() {
-      selectedDepartment = userSnapshot['dept'];
-    });
-  });
+      FirebaseFirestore.instance
+          .collection('Student')
+          .doc(user.uid)
+          .get()
+          .then((DocumentSnapshot userSnapshot) {
+        setState(() {
+          selectedDepartment = userSnapshot['dept'];
+        });
+      });
 
-FirebaseFirestore.instance
-      .collection('Teacher')
-      .doc(user.uid)
-      .get()
-      .then((DocumentSnapshot userSnapshot) {
-    setState(() {
-      selectedDepartment =null;
-    });
-  });
+      FirebaseFirestore.instance
+          .collection('Teacher')
+          .doc(user.uid)
+          .get()
+          .then((DocumentSnapshot userSnapshot) {
+        setState(() {
+          selectedDepartment = null;
+        });
+      });
 
-  FirebaseFirestore.instance
-      .collection('Department')
-      .doc(user.uid)
-      .get()
-      .then((DocumentSnapshot departmentSnapshot) {
-    if (departmentSnapshot.exists) {
-      setState(() {
-        selectedDepartment = null; // Set selectedDepartment to null to display all notifications
+      FirebaseFirestore.instance
+          .collection('Department')
+          .doc(user.uid)
+          .get()
+          .then((DocumentSnapshot departmentSnapshot) {
+        if (departmentSnapshot.exists) {
+          setState(() {
+            selectedDepartment = null; // Set selectedDepartment to null to display all notifications
+          });
+        }
+      });
+
+      FirebaseFirestore.instance
+          .collection('Club')
+          .doc(user.uid)
+          .get()
+          .then((DocumentSnapshot clubSnapshot) {
+        if (clubSnapshot.exists) {
+          setState(() {
+            selectedDepartment = null; // Set selectedDepartment to null to display all notifications
+          });
+        }
       });
     }
-  });
+  }
 
-  FirebaseFirestore.instance
-      .collection('Club')
-      .doc(user.uid)
-      .get()
-      .then((DocumentSnapshot clubSnapshot) {
-    if (clubSnapshot.exists) {
-      setState(() {
-        selectedDepartment = null; // Set selectedDepartment to null to display all notifications
-      });
-    }
-  });
-}
-
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Notifications"),

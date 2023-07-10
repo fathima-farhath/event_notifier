@@ -34,6 +34,7 @@ class _ReadnotificationState extends State<Readnotification> {
     // Check if imageURL is not null or empty
     final bool hasImage = imageURL != null && imageURL.isNotEmpty;
     final bool hasFile = fileUrl != null && fileUrl.isNotEmpty;
+    final bool hasLink = args['link'] != null && args['link'].isNotEmpty;
     return Scaffold(
       appBar: AppBar(
         title: Text(args['title']),
@@ -104,18 +105,21 @@ class _ReadnotificationState extends State<Readnotification> {
               SizedBox(
                 height: 15.0,
               ),
+              if(hasLink)
               Text(
                 "Link",
                 style: TextStyle(
                   fontSize: 15,
+                  fontWeight: FontWeight.bold,
                 ),
-              ),
+              ),  
               GestureDetector(
                 onTap: () async {
                   final url = args['link']; // Replace with your desired URL
                   final uri = Uri.parse(url);
                   await launchUrl(uri);
                 },
+                
                 child: Text(
                   args['link'],
                   style: TextStyle(

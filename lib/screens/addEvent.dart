@@ -65,8 +65,6 @@ class _CreateEventState extends State<CreateEvent> {
 //   final String serverKey = 'AAAAQzLAQmw:APA91bFpoZhEq5qhmiVC8wEQCOxJ2CIJXF5WNOoqs4o7qMexYt8BlFYe9zFzrorObmSUexZkXyE-wVK1aPvE3bUrSVUVzZe6Q5kjTcqCcNSB6hRrI3Q3XZ_qDHPa0POhA25pyeDh_Awo';
 //   final String notificationTitle = 'New Event';
 //   final String notificationBody = 'A new event has been added.';
-//   final String topic = 'events';
-
 //   final Uri url = Uri.parse('https://fcm.googleapis.com/fcm/send');
 //   final Map<String, dynamic> body = {
 //     'notification': {
@@ -79,13 +77,11 @@ class _CreateEventState extends State<CreateEvent> {
 //     'Content-Type': 'application/json',
 //     'Authorization': 'key=$serverKey',
 //   };
-
 //   final response = await http.post(
 //     url,
 //     headers: headers,
 //     body: jsonEncode(body),
 //   );
-
 //   if (response.statusCode == 200) {
 //     print('Push notification sent successfully');
 //   } else {
@@ -448,30 +444,7 @@ XFile? selectedImage;
                 height: 20,
               ),
 
-               Container(
-                  width: double.infinity,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: TextFormField(
-                    controller: _linkController,
-                    decoration: InputDecoration(
-                      labelText: 'Link',
-                      // labelStyle: TextStyle(fontSize: 18.0),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5)),
-                      fillColor: Color.fromARGB(255, 255, 255, 255),
-                      filled: true,
-                      contentPadding: const EdgeInsets.all(15),
-                    ),
-                    
-                  )
-                ),
-                SizedBox(height:20,),
-
-                //attach image
-                  ElevatedButton(
+                 ElevatedButton(
                   onPressed: () async {
                     ImagePicker imagePicker = ImagePicker();
                     XFile? file = await imagePicker.pickImage(source: ImageSource.gallery);
@@ -519,9 +492,31 @@ XFile? selectedImage;
                 selectedImage != null ? selectedImage!.name : '',  
                 style: TextStyle(fontSize: 12.0),
                 ),
-                SizedBox(
-                        height: 10.0,
-                      ),
+               Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextFormField(
+                    controller: _linkController,
+                    decoration: InputDecoration(
+                      labelText: 'Link',
+                      // labelStyle: TextStyle(fontSize: 18.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                      fillColor: Color.fromARGB(255, 255, 255, 255),
+                      filled: true,
+                      contentPadding: const EdgeInsets.all(15),
+                    ),
+                    
+                  )
+                ),
+                SizedBox(height:20,),
+
+                //attach image
+                 
+                
                 SizedBox(
                 height:20,
               ),
