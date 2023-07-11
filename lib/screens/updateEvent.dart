@@ -335,7 +335,7 @@ class _UpdateEventState extends State<UpdateEvent> {
                   //     .pickImage(source: ImageSource.camera))!;
                   ImagePicker imagePicker = ImagePicker();
                   XFile? file =
-                      await imagePicker.pickImage(source: ImageSource.camera);
+                      await imagePicker.pickImage(source: ImageSource.gallery);
                   if (file == null) return;
 
                   String uniqueFilename =

@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'feedHOD.dart';
+import 'feedHOD.dart';
+import 'feedTeach.dart';
+import 'feedStud.dart';
 
 class EditNotifications extends StatefulWidget {
   const EditNotifications({super.key});
@@ -53,11 +56,20 @@ class _EditNotificationsState extends State<EditNotifications> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Notifications"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            goTofeed(context);
+          },
+        ),
         actions: [
-            IconButton(onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>MyFeed()));
-            }, icon: Icon(Icons.home)),
-            ],
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => MyFeed()));
+              },
+              icon: Icon(Icons.home)),
+        ],
       ),
       body: StreamBuilder(
         stream: notification
@@ -141,13 +153,14 @@ class _EditNotificationsState extends State<EditNotifications> {
                                     settings: RouteSettings(arguments: {
                                       'title': notification['title'],
                                       'broadTitle': notification['broadTitle'],
-                                      'shortDescription':notification['shortDescription'],
+                                      'shortDescription':
+                                          notification['shortDescription'],
                                       'para1Desc': notification['para1Desc'],
                                       'para2Desc': notification['para2Desc'],
                                       'link': notification['link'],
                                       'id': notification.id,
-                                      'fileUrl':notification['fileUrl'],
-                                      'imageURL':notification['imageURL']
+                                      'fileUrl': notification['fileUrl'],
+                                      'imageURL': notification['imageURL']
                                     }),
                                   ),
                                 );
@@ -196,5 +209,59 @@ class _EditNotificationsState extends State<EditNotifications> {
         ),
       ),
     );
+  }
+
+  void goTofeed(BuildContext context) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    // Check if user is authenticated
+    User? user = auth.currentUser;
+    try {
+      if (user != null) {
+        String userId = user.uid;
+
+        final studentDoc = await FirebaseFirestore.instance
+            .collection('Student')
+            .doc(userId)
+            .get();
+        if (studentDoc.exists) {
+          print("Student");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeeds()),
+          );
+        }
+
+        final teachDoc = await FirebaseFirestore.instance
+            .collection('Teacher')
+            .doc(userId)
+            .get();
+        if (teachDoc.exists) {
+          print("Teacher");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeedt()),
+          );
+        }
+
+        final clubDoc = await FirebaseFirestore.instance
+            .collection('Club')
+            .doc(userId)
+            .get();
+        final hodDoc = await FirebaseFirestore.instance
+            .collection('Department')
+            .doc(userId)
+            .get();
+        if (clubDoc.exists || hodDoc.exists) {
+          print("Club");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeed()),
+          );
+        }
+      }
+    } catch (e) {
+      print("error in moving: $e");
+    }
   }
 }

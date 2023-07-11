@@ -234,7 +234,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               .doc(userId)
               .update({
             'name': username,
-            'phno': phoneNumber,
+            'P hno': phoneNumber,
           });
 
           // Fields updated successfully

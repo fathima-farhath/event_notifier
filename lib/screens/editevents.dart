@@ -5,6 +5,9 @@ import 'addEvent.dart';
 import 'updateEvent.dart';
 import 'feedHOD.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'feedHOD.dart';
+import 'feedTeach.dart';
+import 'feedStud.dart';
 
 class EditEvent extends StatefulWidget {
   const EditEvent({super.key});
@@ -55,13 +58,22 @@ class _EditEventState extends State<EditEvent> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Add Events"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            goTofeed(context);
+          },
+        ),
         actions: [
-            IconButton(onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>MyFeed()));
-            }, icon: Icon(Icons.home)),
-            ],
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => MyFeed()));
+              },
+              icon: Icon(Icons.home)),
+        ],
       ),
-body: StreamBuilder(
+      body: StreamBuilder(
         stream: event
             .where('creatorId',
                 isEqualTo: FirebaseAuth.instance.currentUser!.uid)
@@ -174,7 +186,8 @@ body: StreamBuilder(
                                               eventSnap['longDescription2'],
                                           'link': eventSnap['link'],
                                           'id': eventSnap.id,
-                                          'imageURL': eventSnap['imageURL'], // Include the imageURL field
+                                          'imageURL': eventSnap[
+                                              'imageURL'], // Include the imageURL field
                                           'timestamp':
                                               FieldValue.serverTimestamp(),
                                         })),
@@ -217,5 +230,59 @@ body: StreamBuilder(
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
+  }
+
+  void goTofeed(BuildContext context) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    // Check if user is authenticated
+    User? user = auth.currentUser;
+    try {
+      if (user != null) {
+        String userId = user.uid;
+
+        final studentDoc = await FirebaseFirestore.instance
+            .collection('Student')
+            .doc(userId)
+            .get();
+        if (studentDoc.exists) {
+          print("Student");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeeds()),
+          );
+        }
+
+        final teachDoc = await FirebaseFirestore.instance
+            .collection('Teacher')
+            .doc(userId)
+            .get();
+        if (teachDoc.exists) {
+          print("Teacher");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeedt()),
+          );
+        }
+
+        final clubDoc = await FirebaseFirestore.instance
+            .collection('Club')
+            .doc(userId)
+            .get();
+        final hodDoc = await FirebaseFirestore.instance
+            .collection('Department')
+            .doc(userId)
+            .get();
+        if (clubDoc.exists || hodDoc.exists) {
+          print("Club");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFeed()),
+          );
+        }
+      }
+    } catch (e) {
+      print("error in moving: $e");
+    }
   }
 }
