@@ -9,6 +9,7 @@ class Otp extends StatelessWidget {
     required this.otpController,
   }) : super(key: key);
   final TextEditingController otpController;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -17,11 +18,15 @@ class Otp extends StatelessWidget {
       child: TextFormField(
         controller: otpController,
         keyboardType: TextInputType.number,
-        style: Theme.of(context).textTheme.headline6,
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
         textAlign: TextAlign.center,
         inputFormatters: [
           LengthLimitingTextInputFormatter(1),
-          FilteringTextInputFormatter.digitsOnly
+          FilteringTextInputFormatter.digitsOnly,
         ],
         onChanged: (value) {
           if (value.length == 1) {
@@ -31,8 +36,15 @@ class Otp extends StatelessWidget {
             FocusScope.of(context).previousFocus();
           }
         },
-        decoration: const InputDecoration(
-          hintText: (''),
+        decoration: InputDecoration(
+          hintText: '',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.blue),
+          ),
         ),
         onSaved: (value) {},
       ),
@@ -43,6 +55,7 @@ class Otp extends StatelessWidget {
 class OtpScreen extends StatefulWidget {
   const OtpScreen({Key? key, required this.myauth}) : super(key: key);
   final EmailOTP myauth;
+
   @override
   State<OtpScreen> createState() => _OtpScreenState();
 }
@@ -53,15 +66,21 @@ class _OtpScreenState extends State<OtpScreen> {
   TextEditingController otp3Controller = TextEditingController();
   TextEditingController otp4Controller = TextEditingController();
 
-  String otpController = "1234";
+  String otp = "1234";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
+        backgroundColor: Color.fromARGB(0, 55, 12, 211),
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            // Navigator.push(context, MaterialPageRoute(builder: (context)=>()));
+          },
           icon: const Icon(Icons.arrow_back_ios_new),
+          color: Colors.black,
+          
         ),
         actions: [
           IconButton(
@@ -71,67 +90,72 @@ class _OtpScreenState extends State<OtpScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(
-              height: 40,
+            const Icon(
+              Icons.dialpad_rounded,
+              size: 64,
+              color: Colors.indigo,
             ),
-            const Icon(Icons.dialpad_rounded, size: 50),
             const SizedBox(
               height: 40,
             ),
             const Text(
-              "Enter OTP send to ur email id",
-              style: TextStyle(fontSize: 30),
+              "Enter OTP sent to your email",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Otp(
-                  otpController: otp1Controller,
-                ),
-                Otp(
-                  otpController: otp2Controller,
-                ),
-                Otp(
-                  otpController: otp3Controller,
-                ),
-                Otp(
-                  otpController: otp4Controller,
-                ),
+                Otp(otpController: otp1Controller),
+                Otp(otpController: otp2Controller),
+                Otp(otpController: otp3Controller),
+                Otp(otpController: otp4Controller),
               ],
             ),
-            const SizedBox(
-              height: 40,
-            ),
-            const SizedBox(
-              height: 40,
-            ),
+            const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () async {
                 if (await widget.myauth.verifyOTP(
-                        otp: otp1Controller.text +
-                            otp2Controller.text +
-                            otp3Controller.text +
-                            otp4Controller.text) ==
-                    true) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("OTP is verified"),
-                  ));
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const MyFeed()));
+                    otp: otp1Controller.text +
+                        otp2Controller.text +
+                        otp3Controller.text +
+                        otp4Controller.text)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("OTP is verified"),
+                    ),
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MyFeed()),
+                  );
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Invalid OTP"),
-                  ));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Invalid OTP"),
+                    ),
+                  );
                 }
               },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 40,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
               child: const Text(
                 "Confirm",
                 style: TextStyle(fontSize: 20),
               ),
-            )
+            ),
           ],
         ),
       ),

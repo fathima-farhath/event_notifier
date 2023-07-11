@@ -39,7 +39,7 @@ class _ScreenSplashState extends State<ScreenSplash> {
               height: 80,
             ),
             const Text(
-              'EVENT NOTIFIER',
+              'SOE Eventy',
               style: TextStyle(
                 fontFamily: 'Kablammo',
                 fontSize: 44,
@@ -49,7 +49,7 @@ class _ScreenSplashState extends State<ScreenSplash> {
               height: 9,
             ),
             const Text(
-              'All event notification at one place',
+              'All Event Notification At One place',
               style: TextStyle(
                 fontSize: 17,
                 fontFamily: 'Monospace',
