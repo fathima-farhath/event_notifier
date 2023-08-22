@@ -88,7 +88,7 @@ class _UpdateNotificationState extends State<UpdateNotification> {
   _titleController.text=args['title'];
   _broadTitleController.text=args['broadTitle'];
   _shortDescriptionController.text=args['shortDescription'];
-  _para1DescController.text=args['para2Desc'];
+  _para1DescController.text=args['para1Desc'];
   _para2DescController.text=args['para2Desc'];
   _linkController.text=args['link'];
   final docId=args['id'];
